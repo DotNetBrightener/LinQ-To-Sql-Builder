@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30104.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B84E1EED-79D1-49A3-B9A8-E3B8208DB123}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "LinQToSqlBuilder.Shared", "Shared\LinQToSqlBuilder.Shared\LinQToSqlBuilder.Shared.shproj", "{8B3B4A5C-168E-4CC4-8C9D-63F5D55AFF34}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Shared\LinQToSqlBuilder.Shared\LinQToSqlBuilder.Shared.projitems*{8b3b4a5c-168e-4cc4-8c9d-63f5d55aff34}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8B3B4A5C-168E-4CC4-8C9D-63F5D55AFF34} = {B84E1EED-79D1-49A3-B9A8-E3B8208DB123}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6BDCBC62-0799-4200-BFE0-254E3E31ECA8}
+	EndGlobalSection
+EndGlobal
