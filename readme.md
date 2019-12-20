@@ -23,7 +23,7 @@ I would like to send my appreciation to the original author [DomanyDusan](https:
 .NET versions supported
 ===
 
-At the moment the library supports .Net Core 2.1.
+At the moment the library supports .Net Core 2.1 and above.
 
 Installation
 ============
@@ -70,12 +70,44 @@ Usage
 
 ## Simple Select
 
-*Work In Progress*
+This basic example queries the database for 10 User and order them by their registration date using **Dapper**:
+```csharp
+var query = SqlBuilder.Select<User>()
+                      .OrderBy(_ => _.RegistrationDate)
+                      .Take(10);
+                      
+var results = Connection.Query<User>(query.CommandText, query.CommandParameters);
+```
 
+As you can see the CommandText property will return the SQL string itself, while the CommandParameters property refers to a dictionary of SQL parameters. 
 
 ## Select query with Join
+The below example performs a query to the User table, and join it with UserGroup table to returns a many to many relationship mapping specified using **Dapper** mapping API
 
-*Work In Progress*
+```csharp
+var query = SqlBuilder.Select<User>()
+                    //.Where(user => user.Email == email)
+                      .Join<UserUserGroup>((@user, @group) => user.Id == group.UserId)
+                      .Join<UserGroup>((group,     g) => group.UserGroupId == g.Id)
+                      .Where(group => group.Id == groupId);
+
+var result = new Dictionary<long, User>();
+var results = Connection.Query<User, UserGroup, User>(query.CommandText,
+                                                        (user, group) =>
+                                                        {
+                                                            if (!result.ContainsKey(user.Id))
+                                                            {
+                                                                user.Groups = new List<UserGroup>();
+                                                                result.Add(user.Id, user);
+                                                            }
+
+                                                            result[user.Id].Groups.Add(group);
+                                                            return user;
+                                                        },
+                                                        query.CommandParameters,
+                                                        splitOn: "UserId,UserGroupId")
+                        .ToList();
+```
 
 ## Insert single record
 
