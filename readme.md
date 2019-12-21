@@ -111,7 +111,20 @@ var results = Connection.Query<User, UserGroup, User>(query.CommandText,
 
 ## Insert single record
 
-*Work In Progress*
+The example below will generate an insert command with one record.
+
+```csharp
+var query = SqlBuilder.Insert<UserGroup>(_ => new UserGroup
+            {
+                CreatedBy   = "TestSystem",
+                CreatedDate = DateTimeOffset.Now,
+                Description = "Created from Test System",
+                Name        = "TestUserGroup",
+                IsDeleted   = false
+            });
+
+var results = Connection.Execute(query.CommandText, query.CommandParameters);
+```
 
 ## Insert multiple records
 
@@ -122,8 +135,16 @@ var results = Connection.Query<User, UserGroup, User>(query.CommandText,
 *Work In Progress*
 
 ## Delete a record / multiple records by condition
+The example below will generate a command to delete from User table where the `user.Email` equals the specified `userEmail` value:
+```csharp
+string userEmail = "query_email@domain1.com";
 
-*Work In Progress*
+var query = SqlBuilder.Delete<User>()
+                    .Where(user => user.Email == userEmail);
+                    // .Where(user => user.Email.Contains("part_of_email_to_search"));
+
+var result = Connection.Execute(query.CommandText, query.CommandParameters);
+```
 
 Reference
 =========

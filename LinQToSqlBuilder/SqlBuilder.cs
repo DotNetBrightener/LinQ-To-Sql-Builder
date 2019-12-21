@@ -11,6 +11,34 @@ namespace DotNetBrightener.LinQToSqlBuilder
     public static class SqlBuilder
     {
         /// <summary>
+        /// Prepares an insert command to do the insert operation for one record of specified <see cref="T"/>
+        /// </summary>
+        /// <typeparam name="T">The type of entity that associates to the table to insert record(s) to</typeparam>
+        /// <param name="expression">The expression that generates the record to insert</param>
+        /// <returns></returns>
+        public static SqlBuilder<T> Insert<T>(Expression<Func<T, T>> expression)
+        {
+            return new SqlBuilder<T>()
+            {
+                Operation = SqlOperations.Insert
+            }.Insert(expression);
+        }
+		
+        /// <summary>
+        /// Prepares a delete command to specified <see cref="T"/>
+        /// </summary>
+        /// <typeparam name="T">The type of entity that associates to the table to performs the deletion</typeparam>
+        /// <param name="expression">The expression that filters the records to be deleted</param>
+        /// <returns></returns>
+        public static SqlBuilder<T> Delete<T>(Expression<Func<T, bool>> expression)
+        {
+            return new SqlBuilder<T>()
+            {
+                Operation = SqlOperations.Delete
+            }.Where(expression);
+        }
+
+        /// <summary>
         /// Prepares a select query to specified <see cref="T"/> from given expressions
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to prepare the query to</typeparam>
@@ -128,6 +156,28 @@ namespace DotNetBrightener.LinQToSqlBuilder
             return this;
         }
 
+
+        /// <summary>
+        /// Performs insert a new record from the given expression
+        /// </summary>
+        /// <param name="expression">The expression describes what to insert</param>
+        /// <returns></returns>
+        public SqlBuilder<T> Insert(Expression<Func<T, T>> expression)
+        {
+            Resolver.Insert<T>(expression);
+            return this;
+        }
+
+        /// <summary>
+        /// Performs insert many records from the given expression
+        /// </summary>
+        /// <param name="expression">The expression describes the entities to insert</param>
+        /// <returns></returns>
+        public SqlBuilder<T> Insert(Expression<Func<T, IEnumerable<T>>> expression)
+        {
+            Resolver.Insert(expression);
+            return this;
+        }
         public SqlBuilder<T> SelectCount(Expression<Func<T, object>> expression)
         {
             Resolver.SelectWithFunction(expression, SelectFunction.COUNT);
