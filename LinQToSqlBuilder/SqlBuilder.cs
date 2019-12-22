@@ -23,7 +23,35 @@ namespace DotNetBrightener.LinQToSqlBuilder
                 Operation = SqlOperations.Insert
             }.Insert(expression);
         }
-		
+
+        /// <summary>
+        /// Prepares an insert command to do the insert operation for many records of specified <see cref="T"/>
+        /// </summary>
+        /// <typeparam name="T">The type of entity that associates to the table to insert record(s) to</typeparam>
+        /// <param name="expression">The expression that generates the records to insert</param>
+        /// <returns></returns>
+        public static SqlBuilder<T> InsertMany<T>(Expression<Func<T, IEnumerable<T>>> expression)
+        {
+            return new SqlBuilder<T>()
+            {
+                Operation = SqlOperations.Insert
+            }.Insert(expression);
+        }
+
+        /// <summary>
+        /// Prepares an insert command to copy record(s) from specific <see cref="T"/> table to the <see cref="TTo"/> destination table
+        /// </summary>
+        /// <typeparam name="T">The type of entity that associates to the source table to copy record(s) from</typeparam>
+        /// <typeparam name="TTo">The type of entity that associates to the destination table to copy record(s) to</typeparam>
+        /// <param name="expression">The expression describes how to form the destination record</param>
+        /// <returns></returns>
+        public static SqlBuilder<T> InsertFrom<T, TTo>(Expression<Func<T, TTo>> expression)
+        {
+            return new SqlBuilder<T>()
+            {
+                Operation = SqlOperations.InsertFrom
+            }.Insert(expression);
+        }
         /// <summary>
         /// Prepares a delete command to specified <see cref="T"/>
         /// </summary>
@@ -178,6 +206,20 @@ namespace DotNetBrightener.LinQToSqlBuilder
             Resolver.Insert(expression);
             return this;
         }
+
+        /// <summary>
+        /// Performs insert to <see cref="TTo"/> table using the values copied from the given expression
+        /// </summary>
+        /// <typeparam name="TTo">The destination table</typeparam>
+        /// <param name="expression">The expression describes how to copy values from original table <see cref="T"/></param>
+        /// <returns></returns>
+        public SqlBuilder<T> Insert<TTo>(Expression<Func<T, TTo>> expression)
+        {
+            Builder.InsertTo<TTo>();
+            Resolver.Insert<T, TTo>(expression);
+            return this;
+        }
+
         public SqlBuilder<T> SelectCount(Expression<Func<T, object>> expression)
         {
             Resolver.SelectWithFunction(expression, SelectFunction.COUNT);
