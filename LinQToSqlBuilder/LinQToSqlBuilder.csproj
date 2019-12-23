@@ -9,7 +9,7 @@
 		<Company>DotNet Brightener</Company>
 		<PackageDescription>A small library that help you convert LinQ lambda expression into raw SQL queries with strongly type manner.</PackageDescription>
 		<RepositoryUrl>https://github.com/dotnetbrightener/linq-to-sql-builder</RepositoryUrl>
-		<AssemblyName>.LinQToSqlBuilder</AssemblyName>
+		<AssemblyName>LinQToSqlBuilder</AssemblyName>
 		<RootNamespace>DotNetBrightener.LinQToSqlBuilder</RootNamespace>
 	</PropertyGroup>
 
