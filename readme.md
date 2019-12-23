@@ -195,6 +195,20 @@ Assert.AreEqual("INSERT INTO [dbo].[InventoryHistory] ([CreatedBy], [CreatedDate
                 query.CommandText);
 ```
 
+## Update a record
+The example below will generate a command to update the User table, provides 3 properties to be updated, where `user.Id` equals the given value `userId`
+```csharp
+var query = SqlBuilder.Update<User>(_ => new User
+                                   {
+                                       Email              = _.Email.Replace("@domain1.com", "@domain2.com"),
+                                       LastChangePassword = DateTimeOffset.Now,
+                                       FailedLogIns       = _.FailedLogIns + 1
+                                   })
+                    .Where(user => user.Id == userId);
+
+var result = Connection.Execute(query.CommandText, query.CommandParameters);
+// this will return the affected rows of the query
+```
 
 ## Delete a record / multiple records by condition
 The example below will generate a command to delete from User table where the `user.Email` equals the specified `userEmail` value:

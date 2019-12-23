@@ -52,6 +52,16 @@ namespace DotNetBrightener.LinQToSqlBuilder
                 Operation = SqlOperations.InsertFrom
             }.Insert(expression);
         }
+
+        public static SqlBuilder<T> Update<T>(Expression<Func<T, object>> expression)
+        {
+            return new SqlBuilder<T>()
+                {
+                    Operation = SqlOperations.Update
+                }
+               .Update(expression);
+        }
+
         /// <summary>
         /// Prepares a delete command to specified <see cref="T"/>
         /// </summary>
@@ -184,6 +194,11 @@ namespace DotNetBrightener.LinQToSqlBuilder
             return this;
         }
 
+        public SqlBuilder<T> Update(Expression<Func<T, object>> expression)
+        {
+            Resolver.Update(expression);
+            return this;
+        }
 
         /// <summary>
         /// Performs insert a new record from the given expression

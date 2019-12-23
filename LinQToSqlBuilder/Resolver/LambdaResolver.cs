@@ -35,7 +35,7 @@ namespace DotNetBrightener.LinQToSqlBuilder.Resolver
 
         private static readonly List<IUpdateStatementResolver> StatementResolvers = new List<IUpdateStatementResolver>
         {
-
+            new StringReplaceUpdateResolver()
         };
 
         public static void RegisterResolver(IUpdateStatementResolver resolver)
