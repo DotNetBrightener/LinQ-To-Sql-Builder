@@ -128,11 +128,73 @@ var results = Connection.Execute(query.CommandText, query.CommandParameters);
 
 ## Insert multiple records
 
-*Work In Progress*
+The example below will generate an insert command with multiple records.
 
-## Update a record
+```csharp
+var query = SqlBuilder.InsertMany<UserGroup>(_ => new []
+            {
+                new UserGroup
+                {
+                    CreatedBy   = "TestSystem",
+                    CreatedDate = DateTimeOffset.Now,
+                    Description = "Created from Test System",
+                    Name        = "TestUserGroup",
+                    IsDeleted   = false
+                },
 
-*Work In Progress*
+                new UserGroup
+                {
+                    CreatedBy   = "TestSystem",
+                    CreatedDate = DateTimeOffset.Now,
+                    Description = "Created from Test System",
+                    Name        = "TestUserGroup2",
+                    IsDeleted   = false
+                },
+
+                new UserGroup
+                {
+                    CreatedBy   = "TestSystem",
+                    CreatedDate = DateTimeOffset.Now,
+                    Description = "Created from Test System",
+                    Name        = "TestUserGroup3",
+                    IsDeleted   = false
+                }
+            });
+
+var results = Connection.Execute(query.CommandText, query.CommandParameters);
+```
+
+## Insert by copying from another table
+
+Sometimes we need to copy a bunch of records from one table to another. For instance, if we have an order that contains few products, and the quantity of the products are being updated before the order gets finalized. So we need to keep the inventory history records of all products that are being updated from time to time. Using Entity Framework, we could have loaded all inventory records of the specified products, then create a copied object and insert them to the inventory history. The more products you have, the slower performance you will suffer because you will have to deal with the data that are in memory versus the data that are being processed by other request(s).
+
+```csharp
+var query = SqlBuilder.InsertFrom<Inventory, InventoryHistory>(inventory => new InventoryHistory()
+                                   {
+                                       CreatedBy        = "Cloning System",
+                                       CreatedDate      = DateTimeOffset.Now,
+                                       StockQuantity    = inventory.StockQuantity,
+                                       ReservedQuantity = inventory.ReservedQuantity,
+                                       IsDeleted        = inventory.IsDeleted,
+                                       InventoryId      = inventory.Id,
+                                       ProductId        = inventory.ProductId
+                                   })
+                                  .WhereIsIn(inventory => inventory.ProductId, new long[] { /*... obmited values, describes the list of product ids */ });
+
+Assert.AreEqual("INSERT INTO [dbo].[InventoryHistory] ([CreatedBy], [CreatedDate], [StockQuantity], [ReservedQuantity], [IsDeleted], [InventoryId], [ProductId]) " +
+                "SELECT " +
+                "@Param1 as [CreatedBy], " +
+                "@Param2 as [CreatedDate], " +
+                "[dbo].[Inventory].[StockQuantity] as [StockQuantity], " +
+                "[dbo].[Inventory].[ReservedQuantity] as [ReservedQuantity], " +
+                "[dbo].[Inventory].[IsDeleted] as [IsDeleted], " +
+                "[dbo].[Inventory].[Id] as [InventoryId] " +
+                "[dbo].[Inventory].[ProductId] as [ProductId] " +
+                "FROM [dbo].[Inventory] " +
+                "WHERE [dbo].[Inventory].[ProductId] IS IN @Param3",
+                query.CommandText);
+```
+
 
 ## Delete a record / multiple records by condition
 The example below will generate a command to delete from User table where the `user.Email` equals the specified `userEmail` value:
