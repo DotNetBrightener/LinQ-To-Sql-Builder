@@ -15,7 +15,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to insert record(s) to</typeparam>
         /// <param name="expression">The expression that generates the record to insert</param>
-        /// <returns></returns>
+        /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
         public static SqlBuilder<T> Insert<T>(Expression<Func<T, T>> expression)
         {
             return new SqlBuilder<T>()
@@ -29,7 +29,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to insert record(s) to</typeparam>
         /// <param name="expression">The expression that generates the records to insert</param>
-        /// <returns></returns>
+        /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
         public static SqlBuilder<T> InsertMany<T>(Expression<Func<T, IEnumerable<T>>> expression)
         {
             return new SqlBuilder<T>()
@@ -44,7 +44,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
         /// <typeparam name="T">The type of entity that associates to the source table to copy record(s) from</typeparam>
         /// <typeparam name="TTo">The type of entity that associates to the destination table to copy record(s) to</typeparam>
         /// <param name="expression">The expression describes how to form the destination record</param>
-        /// <returns></returns>
+        /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
         public static SqlBuilder<T> InsertFrom<T, TTo>(Expression<Func<T, TTo>> expression)
         {
             return new SqlBuilder<T>()
@@ -52,6 +52,13 @@ namespace DotNetBrightener.LinQToSqlBuilder
                 Operation = SqlOperations.InsertFrom
             }.Insert(expression);
         }
+
+        /// <summary>
+        /// Prepares an update command to specified <see cref="T"/>
+        /// </summary>
+        /// <typeparam name="T">The type of entity that associates to the table to performs the update</typeparam>
+        /// <param name="expression">The expression that describes how to update the record</param>
+        /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
 
         public static SqlBuilder<T> Update<T>(Expression<Func<T, object>> expression)
         {
@@ -67,7 +74,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to performs the deletion</typeparam>
         /// <param name="expression">The expression that filters the records to be deleted</param>
-        /// <returns></returns>
+        /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
         public static SqlBuilder<T> Delete<T>(Expression<Func<T, bool>> expression)
         {
             return new SqlBuilder<T>()
@@ -81,7 +88,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to prepare the query to</typeparam>
         /// <param name="expressions">The expressions that describe how to filter the results</param>
-        /// <returns></returns>
+        /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
         public static SqlBuilder<T> Select<T>(params Expression<Func<T, object>>[] expressions)
         {
             return new SqlBuilder<T>().Select(expressions);
