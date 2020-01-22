@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
 		<PackageId>DotNetBrightener.LinQToSqlBuilder</PackageId>
-		<Version>1.0.0</Version>
+		<Version>1.0.1</Version>
 		<Copyright>© 2020 DotNet Brightener</Copyright>
 		<Authors>DotNet Brightener</Authors>
 		<Company>DotNet Brightener</Company>
@@ -11,6 +11,11 @@
 		<RepositoryUrl>https://github.com/dotnetbrightener/linq-to-sql-builder</RepositoryUrl>
 		<AssemblyName>LinQToSqlBuilder</AssemblyName>
 		<RootNamespace>DotNetBrightener.LinQToSqlBuilder</RootNamespace>
+	</PropertyGroup>
+
+	<PropertyGroup>
+	  <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+		<NoWarn>1701;1702;1591;1574;1723</NoWarn>
 	</PropertyGroup>
 
 </Project>

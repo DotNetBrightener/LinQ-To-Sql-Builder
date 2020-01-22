@@ -1,6 +1,4 @@
-﻿/* License: http://www.apache.org/licenses/LICENSE-2.0 */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DotNetBrightener.LinQToSqlBuilder.Adapter;
