@@ -78,6 +78,11 @@ namespace DotNetBrightener.LinQToSqlBuilder.Resolver
             Builder.Select(GetTableName<T>(), fieldName, selectFunction);
         }
 
+        public void SelectWithFunction<T>(SelectFunction selectFunction)
+        {
+            Builder.Select(selectFunction);
+        }
+
         public void GroupBy<T>(Expression<Func<T, object>> expression)
         {
             GroupBy<T>(GetMemberExpression(expression.Body));

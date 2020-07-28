@@ -11,6 +11,24 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
     public class LinQToSqlQueryTests : TestBase
     {
         [Test]
+        public void QueryCount()
+        {
+            var query = SqlBuilder.Count<User>(_ => _.Id)
+                                  .Where(_ => _.Id > 10);
+
+            Assert.AreEqual($"SELECT COUNT([dbo].[Users].[Id]) FROM [dbo].[Users] " +
+                            $"WHERE [dbo].[Users].[Id] > @Param1",
+                            query.CommandText);
+
+            query = SqlBuilder.Count<User>()
+                                  .Where(_ => _.Id > 10);
+
+            Assert.AreEqual($"SELECT COUNT(*) FROM [dbo].[Users] " +
+                            $"WHERE [dbo].[Users].[Id] > @Param1",
+                            query.CommandText);
+        }
+
+        [Test]
         public void QueryWithPagination()
         {
             var query = SqlBuilder.Select<User>()

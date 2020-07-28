@@ -84,19 +84,59 @@ namespace DotNetBrightener.LinQToSqlBuilder
         }
 
         /// <summary>
-        /// Prepares a select query to specified <see cref="T"/> from given expressions
+        /// Prepares a select query to specified <see cref="T"/> from given expression
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to prepare the query to</typeparam>
-        /// <param name="expressions">The expressions that describe how to filter the results</param>
+        /// <param name="expressions">The expression that describe how to filter the results</param>
         /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
         public static SqlBuilder<T> Select<T>(params Expression<Func<T, object>>[] expressions)
         {
             return new SqlBuilder<T>().Select(expressions);
         }
+
+        /// <summary>
+        /// Prepares a select count query to specified <see cref="T"/> from given expression
+        /// </summary>
+        /// <typeparam name="T">The type of entity that associates to the table to prepare the query to</typeparam>
+        /// <param name="expression">The expression that describe how to filter the results</param>
+        /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
+        public static SqlBuilder<T> Count<T>(Expression<Func<T, bool>> expression = null)
+        {
+            return Count<T>(null, expression);
+        }
+
+        /// <summary>
+        /// Prepares a select count query to specified <see cref="T"/> from given expression
+        /// </summary>
+        /// <typeparam name="T">The type of entity that associates to the table to prepare the query to</typeparam>
+        /// <param name="countExpression">The expression that describe how to pick the fields for counting</param>
+        /// <param name="expression">The expression that describe how to filter the results</param>
+        /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
+        public static SqlBuilder<T> Count<T>(Expression<Func<T, object>> countExpression,
+                                             Expression<Func<T, bool>>   expression = null)
+        {
+            var sqlBuilder = new SqlBuilder<T>();
+
+            if (countExpression != null)
+            {
+                sqlBuilder.SelectCount(countExpression);
+            }
+            else
+            {
+                sqlBuilder.SelectCountAll();
+            }
+
+            if (expression != null)
+            {
+                sqlBuilder.Where(expression);
+            }
+
+            return sqlBuilder;
+        }
     }
 
     /// <summary>
-    /// Represents the service that will generate SQL commands from given lambda expressions
+    /// Represents the service that will generate SQL commands from given lambda expression
     /// </summary>
     /// <typeparam name="T">The type of entity that associates to the table, used to perform the table and field name resolution</typeparam>
     public class SqlBuilder<T> : SqlBuilderBase
@@ -245,6 +285,12 @@ namespace DotNetBrightener.LinQToSqlBuilder
         public SqlBuilder<T> SelectCount(Expression<Func<T, object>> expression)
         {
             Resolver.SelectWithFunction(expression, SelectFunction.COUNT);
+            return this;
+        }
+
+        public SqlBuilder<T> SelectCountAll()
+        {
+            Resolver.SelectWithFunction<T>(SelectFunction.COUNT);
             return this;
         }
 

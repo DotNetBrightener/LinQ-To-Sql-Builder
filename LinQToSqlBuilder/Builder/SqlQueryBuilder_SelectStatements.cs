@@ -41,7 +41,13 @@ namespace DotNetBrightener.LinQToSqlBuilder.Builder
 
         public void Select(string tableName, string fieldName, SelectFunction selectFunction)
         {
-            var selectionString = string.Format("{0}({1})", selectFunction.ToString(), Adapter.Field(tableName, fieldName));
+            var selectionString = $"{selectFunction}({Adapter.Field(tableName, fieldName)})";
+            SelectionList.Add(selectionString);
+        }
+
+        public void Select(SelectFunction selectFunction)
+        {
+            var selectionString = $"{selectFunction}(*)";
             SelectionList.Add(selectionString);
         }
 
