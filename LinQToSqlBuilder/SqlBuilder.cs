@@ -95,6 +95,18 @@ namespace DotNetBrightener.LinQToSqlBuilder
         }
 
         /// <summary>
+        /// Prepares a select query to retrieve a single record of specified type <see cref="T"/> satisfies given expression
+        /// </summary>
+        /// <typeparam name="T">The type of entity that associates to the table to prepare the query to</typeparam>
+        /// <param name="expressions">The expression that describe how to filter the results</param>
+        /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
+        public static SqlBuilder<T> SelectSingle<T>(params Expression<Func<T, object>>[] expressions)
+        {
+            return new SqlBuilder<T>().Select(expressions)
+                                      .Take(1);
+        }
+
+        /// <summary>
         /// Prepares a select count query to specified <see cref="T"/> from given expression
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to prepare the query to</typeparam>

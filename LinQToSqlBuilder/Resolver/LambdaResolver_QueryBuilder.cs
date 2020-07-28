@@ -24,7 +24,7 @@ namespace DotNetBrightener.LinQToSqlBuilder.Resolver
             }
             else
             {
-                string value = node.Value;
+                var value = node.Value;
                 switch (node.Method)
                 {
                     case LikeMethod.StartsWith:

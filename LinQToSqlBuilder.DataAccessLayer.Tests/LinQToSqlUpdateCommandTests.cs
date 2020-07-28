@@ -11,7 +11,7 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
         public void UpdateByFieldValue()
         {
             //using var scope = new TransactionScope();
-            string userEmail = "user@email.com";
+            var userEmail = "user@email.com";
             var    userId    = 5;
             var query = SqlBuilder.Update<User>(_ => new User
                                    {

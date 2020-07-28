@@ -25,7 +25,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
 
         internal SqlQueryBuilder SqlBuilder => Builder;
 
-        public string CommandText => Regex.Replace(Builder.CommandText, "\\s+", " ");
+        public string CommandText => Regex.Replace(Builder.CommandText, "\\s+", " ").Trim();
 
         public IDictionary<string, object> CommandParameters => Builder.Parameters;
 

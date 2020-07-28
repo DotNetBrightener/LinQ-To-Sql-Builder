@@ -60,15 +60,31 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
         [Test]
         public void FindByFieldValue()
         {
-            string userEmail = "user@domain1.com";
+            var userEmail = "user@domain1.com";
 
             var query = SqlBuilder.Select<User>()
                                   .Where(user => user.Email == userEmail);
 
-            Assert.AreEqual(query.CommandText,
-                            "SELECT [dbo].[Users].* FROM [dbo].[Users] WHERE [dbo].[Users].[Email] = @Param1");
+            Assert.AreEqual("SELECT [dbo].[Users].* FROM [dbo].[Users] WHERE [dbo].[Users].[Email] = @Param1", 
+                            query.CommandText);
 
-            Assert.AreEqual(query.CommandParameters.First().Value, userEmail);
+            Assert.AreEqual(userEmail,
+                            query.CommandParameters.First().Value);
+        }
+
+        [Test]
+        public void FindByFieldValueAndGetOnlyOneResult()
+        {
+            var userEmail = "user@domain1.com";
+
+            var query = SqlBuilder.SelectSingle<User>()
+                                  .Where(user => user.Email == userEmail);
+
+            Assert.AreEqual("SELECT TOP(1) [dbo].[Users].* FROM [dbo].[Users] WHERE [dbo].[Users].[Email] = @Param1",
+                            query.CommandText);
+
+            Assert.AreEqual(userEmail,
+                            query.CommandParameters.First().Value);
         }
 
         [Test]
