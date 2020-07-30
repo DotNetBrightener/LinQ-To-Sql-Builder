@@ -53,5 +53,10 @@ namespace DotNetBrightener.LinQToSqlBuilder.Builder
 
             lastInsertRecord.Add(Adapter.Field(fieldName), updateValue);
         }
+
+        public void OutputInsertIdentity(string fieldName)
+        {
+            _insertOutput = Adapter.Field(fieldName);
+        }
     }
 }

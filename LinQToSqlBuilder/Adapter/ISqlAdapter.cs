@@ -13,7 +13,7 @@ namespace DotNetBrightener.LinQToSqlBuilder.Adapter
         string QueryStringPage(string selection, string source, string conditions, string order,
             int pageSize, int pageIndex = 0);
 
-        string InsertCommand(string source, List<Dictionary<string, object>> values);
+        string InsertCommand(string source, List<Dictionary<string, object>> values, string output = "");
 
         string InsertFromCommand(string target, string source, List<Dictionary<string, object>> values,
                                  string conditions);

@@ -27,6 +27,25 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
         }
 
         [Test]
+        public void InsertSingleRecordWithOutputIdentity()
+        {
+            var query = SqlBuilder.Insert<UserGroup>(_ => new UserGroup
+                                   {
+                                       CreatedBy   = "TestSystem",
+                                       CreatedDate = DateTimeOffset.Now,
+                                       Description = "Created from Test System",
+                                       Name        = "TestUserGroup",
+                                       IsDeleted   = false
+                                   })
+                                  .OutputIdentity();
+
+            Assert.AreEqual("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
+                            "OUTPUT Inserted.[Id] " +
+                            "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5)",
+                            query.CommandText);
+        }
+
+        [Test]
         public void InsertMultipleRecords()
         {
             var query = SqlBuilder.InsertMany<UserGroup>(_ => new []

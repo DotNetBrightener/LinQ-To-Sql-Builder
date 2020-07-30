@@ -20,7 +20,7 @@ namespace DotNetBrightener.LinQToSqlBuilder.Adapter
                .Trim();
         }
 
-        public string InsertCommand(string target, List<Dictionary<string, object>> values)
+        public string InsertCommand(string target, List<Dictionary<string, object>> values, string output = "")
         {
             var fieldsToInsert = values.First()
                                        .Select(rowValue => rowValue.Key)
@@ -31,10 +31,15 @@ namespace DotNetBrightener.LinQToSqlBuilder.Adapter
                 valuesToInsert.Add(string.Join(", ", rowValue.Select(_ => _.Value)));
             }
 
-            return 
+            return
                 $"INSERT INTO {target} ({string.Join(", ", fieldsToInsert)}) " +
+                (
+                    !string.IsNullOrEmpty(output) 
+                        ? $"OUTPUT Inserted.{output} " 
+                        : string.Empty
+                ) +
                 $"VALUES ({string.Join("), (", valuesToInsert)})"
-               .Trim();
+                   .Trim();
         }
 
         public string InsertFromCommand(string target, string source, List<Dictionary<string, object>> values, string conditions)

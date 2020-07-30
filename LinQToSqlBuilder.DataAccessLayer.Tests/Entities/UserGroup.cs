@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LinQToSqlBuilder.DataAccessLayer.Tests.Entities
@@ -6,6 +7,7 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests.Entities
     [Table("UsersGroup")]
     public class UserGroup
     {
+        [Key]
         public long Id { get; set; }
 
         public string Name { get; set; }

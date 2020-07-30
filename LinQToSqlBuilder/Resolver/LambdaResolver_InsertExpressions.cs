@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using DotNetBrightener.LinQToSqlBuilder.Adapter;
 using DotNetBrightener.LinQToSqlBuilder.Resolver.ExpressionTree;
 
 namespace DotNetBrightener.LinQToSqlBuilder.Resolver
@@ -40,6 +44,31 @@ namespace DotNetBrightener.LinQToSqlBuilder.Resolver
         public void Insert<TFrom, TTo>(Expression<Func<TFrom, TTo>> expression)
         {
             Insert<TTo, TFrom>(expression.Body);
+        }
+
+        /// <summary>
+        /// Append OUTPUT to the insert statement to get the output identity of the inserted record.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the inserting entity</typeparam>
+        public void OutputInsertIdentity<TEntity>()
+        {
+            if (Builder.Operation != SqlOperations.Insert)
+                throw new InvalidOperationException($"Cannot OUTPUT identity for the SQL statement that is not insert");
+
+            var fieldName = "";
+
+            var keyProp = typeof(TEntity).GetProperties()
+                                         .FirstOrDefault(_ => _.GetCustomAttribute<KeyAttribute>() != null);
+
+            if (keyProp == null)
+            {
+                keyProp = typeof(TEntity).GetProperty("Id");
+            }
+
+            fieldName = keyProp?.Name;
+
+            if (!string.IsNullOrEmpty(fieldName))
+                Builder.OutputInsertIdentity(fieldName);
         }
 
         private void Insert<T>(Expression expression)

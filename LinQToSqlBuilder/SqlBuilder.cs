@@ -271,6 +271,18 @@ namespace DotNetBrightener.LinQToSqlBuilder
         }
 
         /// <summary>
+        /// Append OUTPUT to the insert statement to get the output identity of the inserted record.
+        /// </summary>
+        public SqlBuilder<T> OutputIdentity()
+        {
+            if (Builder.Operation != SqlOperations.Insert)
+                throw new InvalidOperationException($"Cannot OUTPUT identity for the SQL statement that is not insert");
+
+            Resolver.OutputInsertIdentity<T>();
+            return this;
+        }
+
+        /// <summary>
         /// Performs insert many records from the given expression
         /// </summary>
         /// <param name="expression">The expression describes the entities to insert</param>

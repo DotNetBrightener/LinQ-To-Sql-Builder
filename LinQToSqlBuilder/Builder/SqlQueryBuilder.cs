@@ -88,6 +88,8 @@ namespace DotNetBrightener.LinQToSqlBuilder.Builder
 
         private string UpdateValues => string.Join(", ", _updateValues);
 
+        private string _insertOutput { get; set; } = "";
+
         private List<Dictionary<string, object>> InsertValues { get; } = new List<Dictionary<string, object>>();
 
         private string Order => OrderByList.Count == 0 ? "" : "ORDER BY " + string.Join(", ", OrderByList);
@@ -105,7 +107,7 @@ namespace DotNetBrightener.LinQToSqlBuilder.Builder
                 switch (Operation)
                 {
                     case SqlOperations.Insert:
-                        return Adapter.InsertCommand(InsertTarget, InsertValues);
+                        return Adapter.InsertCommand(InsertTarget, InsertValues, _insertOutput);
                     case SqlOperations.InsertFrom:
                         return Adapter.InsertFromCommand(InsertTarget, Source, InsertValues, Conditions);
                     case SqlOperations.Update:
