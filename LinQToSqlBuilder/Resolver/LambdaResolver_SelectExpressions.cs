@@ -38,6 +38,11 @@ namespace DotNetBrightener.LinQToSqlBuilder.Resolver
         {
             Select<T>(expression.Body);
         }
+        
+        public void Select<T, TResult>(Expression<Func<T, TResult>> expression)
+        {
+            Select<T>(expression.Body);
+        }
 
         private void Select<T>(Expression expression)
         {
@@ -54,6 +59,20 @@ namespace DotNetBrightener.LinQToSqlBuilder.Resolver
                     foreach (MemberExpression memberExp in (expression as NewExpression).Arguments)
                         Select<T>(memberExp);
                     break;
+                case ExpressionType.MemberInit:
+                    if (expression is MemberInitExpression memberInitExpression)
+                    {
+                        foreach (var memberExp in memberInitExpression.Bindings)
+                        {
+                            if (memberExp is MemberAssignment assignmentExpression)
+                            {
+                                Select<T>(assignmentExpression.Expression);
+                            }
+                        }
+                        break;
+                    }
+
+                    throw new ArgumentException("Invalid expression");
                 default:
                     throw new ArgumentException("Invalid expression");
             }           

@@ -11,7 +11,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
     public static class SqlBuilder
     {
         /// <summary>
-        /// Prepares an insert command to do the insert operation for one record of specified <see cref="T"/>
+        /// Prepares an insert command to do the insert operation for one record of specified <typeparamref name="T"/> 
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to insert record(s) to</typeparam>
         /// <param name="expression">The expression that generates the record to insert</param>
@@ -25,7 +25,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
         }
 
         /// <summary>
-        /// Prepares an insert command to do the insert operation for many records of specified <see cref="T"/>
+        /// Prepares an insert command to do the insert operation for many records of specified <typeparamref name="T"/> 
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to insert record(s) to</typeparam>
         /// <param name="expression">The expression that generates the records to insert</param>
@@ -39,7 +39,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
         }
 
         /// <summary>
-        /// Prepares an insert command to copy record(s) from specific <see cref="T"/> table to the <see cref="TTo"/> destination table
+        /// Prepares an insert command to copy record(s) from specific <typeparamref name="T"/> table to the <typeparamref name="TTo"/>  destination table
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the source table to copy record(s) from</typeparam>
         /// <typeparam name="TTo">The type of entity that associates to the destination table to copy record(s) to</typeparam>
@@ -54,7 +54,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
         }
 
         /// <summary>
-        /// Prepares an update command to specified <see cref="T"/>
+        /// Prepares an update command to specified <typeparamref name="T"/> 
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to performs the update</typeparam>
         /// <param name="expression">The expression that describes how to update the record</param>
@@ -70,7 +70,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
         }
 
         /// <summary>
-        /// Prepares a delete command to specified <see cref="T"/>
+        /// Prepares a delete command to specified <typeparamref name="T"/> 
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to performs the deletion</typeparam>
         /// <param name="expression">The expression that filters the records to be deleted</param>
@@ -84,10 +84,10 @@ namespace DotNetBrightener.LinQToSqlBuilder
         }
 
         /// <summary>
-        /// Prepares a select query to specified <see cref="T"/> from given expression
+        /// Prepares a select query to specified <typeparamref name="T"/> from given expression
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to prepare the query to</typeparam>
-        /// <param name="expressions">The expression that describe how to filter the results</param>
+        /// <param name="expressions">The expressions that describes which fields of the <typeparamref name="T"/> to return</param>
         /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
         public static SqlBuilder<T> Select<T>(params Expression<Func<T, object>>[] expressions)
         {
@@ -95,10 +95,22 @@ namespace DotNetBrightener.LinQToSqlBuilder
         }
 
         /// <summary>
-        /// Prepares a select query to retrieve a single record of specified type <see cref="T"/> satisfies given expression
+        /// Prepares a select query to specified <typeparamref name="T"/> from given expression
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to prepare the query to</typeparam>
-        /// <param name="expressions">The expression that describe how to filter the results</param>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="expression">The expression that describes which fields of the <typeparamref name="T"/> to return</param>
+        /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
+        public static SqlBuilder<T> Select<T, TResult>(Expression<Func<T, TResult>> expression)
+        {
+            return new SqlBuilder<T>().Select(expression);
+        }
+
+        /// <summary>
+        /// Prepares a select query to retrieve a single record of specified type <typeparamref name="T"/> satisfies given expression
+        /// </summary>
+        /// <typeparam name="T">The type of entity that associates to the table to prepare the query to</typeparam>
+        /// <param name="expressions">The expression that describes which fields of the <typeparamref name="T"/> to return</param>
         /// <returns>The instance of <see cref="SqlBuilder{T}"/> for chaining calls</returns>
         public static SqlBuilder<T> SelectSingle<T>(params Expression<Func<T, object>>[] expressions)
         {
@@ -107,7 +119,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
         }
 
         /// <summary>
-        /// Prepares a select count query to specified <see cref="T"/> from given expression
+        /// Prepares a select count query to specified <typeparamref name="T"/> from given expression
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to prepare the query to</typeparam>
         /// <param name="expression">The expression that describe how to filter the results</param>
@@ -118,7 +130,7 @@ namespace DotNetBrightener.LinQToSqlBuilder
         }
 
         /// <summary>
-        /// Prepares a select count query to specified <see cref="T"/> from given expression
+        /// Prepares a select count query to specified <typeparamref name="T"/> from given expression
         /// </summary>
         /// <typeparam name="T">The type of entity that associates to the table to prepare the query to</typeparam>
         /// <param name="countExpression">The expression that describe how to pick the fields for counting</param>
@@ -250,6 +262,14 @@ namespace DotNetBrightener.LinQToSqlBuilder
         {
             foreach (var expression in expressions)
                 Resolver.Select(expression);
+
+            return this;
+        }
+
+        public SqlBuilder<T> Select<TResult>(Expression<Func<T, TResult>> expression)
+        {
+            Resolver.Select(expression);
+
             return this;
         }
 
@@ -348,8 +368,8 @@ namespace DotNetBrightener.LinQToSqlBuilder
             return this;
         }
 
-        public SqlBuilder<TResult> Join<T2, TKey, TResult>(SqlBuilder<T2> joinQuery,  
-            Expression<Func<T, TKey>> primaryKeySelector, 
+        public SqlBuilder<TResult> Join<T2, TKey, TResult>(SqlBuilder<T2> joinQuery,
+            Expression<Func<T, TKey>> primaryKeySelector,
             Expression<Func<T, TKey>> foreignKeySelector,
             Func<T, T2, TResult> selection)
         {
