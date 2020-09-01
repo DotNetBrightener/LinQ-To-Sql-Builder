@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
 		<PackageId>DotNetBrightener.LinQToSqlBuilder</PackageId>
-		<Version>1.0.5</Version>
+		<Version>1.0.6</Version>
 		<Copyright>© 2020 DotNet Brightener</Copyright>
 		<Authors>DotNet Brightener</Authors>
 		<Company>DotNet Brightener</Company>

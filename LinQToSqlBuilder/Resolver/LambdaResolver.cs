@@ -91,7 +91,7 @@ namespace DotNetBrightener.LinQToSqlBuilder.Resolver
 
         private static string GetTableName(MemberExpression expression)
         {
-            return GetTableName(expression.Member.DeclaringType);
+            return GetTableName(expression.Expression.Type);
         }
 
         private static BinaryExpression GetBinaryExpression(Expression expression)

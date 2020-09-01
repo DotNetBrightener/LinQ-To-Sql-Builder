@@ -12,7 +12,7 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
         {
             //using var scope = new TransactionScope();
             var userEmail = "user@email.com";
-            var    userId    = 5;
+            var userId    = 5;
             var query = SqlBuilder.Update<User>(_ => new User
                                    {
                                        Email =

@@ -40,6 +40,30 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
         }
 
         [Test]
+        public void QueryFieldsWithPagination()
+        {
+            var query = SqlBuilder.Select<User, UserViewModel>(user => new UserViewModel
+                                   {
+                                       Email     = user.Email,
+                                       FirstName = user.FirstName,
+                                       LastName  = user.LastName,
+                                       Id        = user.Id
+                                   })
+                                  .Where(_ => !_.RecordDeleted)
+                                  .OrderBy(_ => _.Id)
+                                  .Take(10);
+
+            Assert.AreEqual($"SELECT TOP(10) [dbo].[Users].[Email], " +
+                            $"[dbo].[Users].[FirstName], " +
+                            $"[dbo].[Users].[LastName], " +
+                            $"[dbo].[Users].[Id] " +
+                            $"FROM [dbo].[Users] " +
+                            $"WHERE NOT [dbo].[Users].[RecordDeleted] = @Param1 " +
+                            $"ORDER BY [dbo].[Users].[Id]",
+                            query.CommandText);
+        }
+
+        [Test]
         public void QueryWithPagination2()
         {
             var query = SqlBuilder.Select<User>()
