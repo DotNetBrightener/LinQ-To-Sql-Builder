@@ -1,17 +1,17 @@
 ﻿using NUnit.Framework;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests.Base
+namespace LinQToSqlBuilder.TestHelpers.Base
 {
     public abstract class TestBase
     {
         [SetUp]
-        public void Init()
+        public virtual void Init()
         {
             
         }
 
         [TearDown]
-        public void TearDown()
+        public virtual void TearDown()
         {
             
         }

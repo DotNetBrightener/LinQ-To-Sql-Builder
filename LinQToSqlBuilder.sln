@@ -7,6 +7,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinQToSqlBuilder.DataAccess
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinQToSqlBuilder", "LinQToSqlBuilder\LinQToSqlBuilder.csproj", "{7DEBAE85-F889-4E8B-9F18-24A0AEE7EC2D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4489D13D-AA4D-4B3C-AE8F-C4AB008DFAD4}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinQToSqlBuilder.DataAccessLayer.Npgsql.Tests", "LinQToSqlBuilder.DataAccessLayer.Npgsql.Tests\LinQToSqlBuilder.DataAccessLayer.Npgsql.Tests.csproj", "{AA978E5E-4A65-496A-B63B-6DCF857C566A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinQToSqlBuilder.TestHelpers", "LinQToSqlBuilder.TestHelpers\LinQToSqlBuilder.TestHelpers.csproj", "{04E9848D-8FFF-4D2F-862A-1C795CA4BD02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{96E27856-EFF0-4B70-B831-B34F72B32CD6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{86D14BD7-46D7-4696-91BF-78CFF6F501EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,9 +34,23 @@ Global
 		{7DEBAE85-F889-4E8B-9F18-24A0AEE7EC2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DEBAE85-F889-4E8B-9F18-24A0AEE7EC2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DEBAE85-F889-4E8B-9F18-24A0AEE7EC2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA978E5E-4A65-496A-B63B-6DCF857C566A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA978E5E-4A65-496A-B63B-6DCF857C566A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA978E5E-4A65-496A-B63B-6DCF857C566A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA978E5E-4A65-496A-B63B-6DCF857C566A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04E9848D-8FFF-4D2F-862A-1C795CA4BD02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04E9848D-8FFF-4D2F-862A-1C795CA4BD02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04E9848D-8FFF-4D2F-862A-1C795CA4BD02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04E9848D-8FFF-4D2F-862A-1C795CA4BD02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CE267788-C95C-4A76-A150-1F747E0CC5EE} = {96E27856-EFF0-4B70-B831-B34F72B32CD6}
+		{7DEBAE85-F889-4E8B-9F18-24A0AEE7EC2D} = {86D14BD7-46D7-4696-91BF-78CFF6F501EE}
+		{AA978E5E-4A65-496A-B63B-6DCF857C566A} = {96E27856-EFF0-4B70-B831-B34F72B32CD6}
+		{04E9848D-8FFF-4D2F-862A-1C795CA4BD02} = {96E27856-EFF0-4B70-B831-B34F72B32CD6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BDCBC62-0799-4200-BFE0-254E3E31ECA8}

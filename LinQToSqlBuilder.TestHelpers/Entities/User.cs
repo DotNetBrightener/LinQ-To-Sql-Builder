@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests.Entities
+namespace LinQToSqlBuilder.TestHelpers.Entities
 {
     public abstract class ViewModel
     {
@@ -12,7 +12,7 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests.Entities
     }
 
     [Table("Users")]
-    public class User: ViewModel
+    public class User : ViewModel
     {
         public string FirstName { get; set; }
 
@@ -24,7 +24,9 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests.Entities
 
         public DateTimeOffset? LastChangePassword { get; set; }
 
-        public DateTimeOffset? ModifiedDate       { get; set; }
+        public DateTimeOffset? ModifiedDate { get; set; }
+
+        public DateTime? Birthday { get; set; }
 
         public int FailedLogIns { get; set; }
     }

@@ -1,0 +1,47 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<VersionPrefix>2.0.0</VersionPrefix>
+		<VersionSuffix>beta1</VersionSuffix>
+		<VersionSuffix Condition="'$(VersionSuffix)'!='' AND '$(BuildNumber)' != ''">$(VersionSuffix)-$(BuildNumber)</VersionSuffix>
+		<Copyright>© 2021 DotNet Brightener</Copyright>
+		<Authors>DotNet Brightener &lt;admin@dotnetbrightener.com&gt;</Authors>
+		<Company>DotNet Brightener</Company>
+
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<RepositoryUrl>https://github.com/dotnetbrightener/linq-to-sql-builder</RepositoryUrl>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<DocumentationMarkdown>$(MSBuildProjectDirectory)\$(MSBuildProjectName).md</DocumentationMarkdown>
+		<PackageTags>DotNetBrightener; Linq to sql;</PackageTags>
+		<NoWarn>$(NoWarn);0168;1701;1702;1591;1574;1723;1998;1573;RCS1194;</NoWarn>
+		<PackageIcon>dotnet-brightener-logo.png</PackageIcon>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">	
+		<LibVersion>$(Version)</LibVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DefineConstants>TRACE;RELEASE</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\dotnet-brightener-logo.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Vsxmd" Version="1.4.5">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+</Project>

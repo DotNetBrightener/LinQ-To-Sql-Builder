@@ -7,8 +7,12 @@ namespace DotNetBrightener.LinQToSqlBuilder.Adapter
     /// <summary>
     /// Generates the SQL queries that are compatible to all supported databases
     /// </summary>
-    class SqlAdapterBase
+    internal abstract class SqlAdapterBase
     {
+        protected abstract string OpenQuote     { get; }
+        protected abstract string CloseQuote    { get; }
+        public abstract    string DefaultSchema { get; }
+
         public string QueryString(string selection,
                                   string source,
                                   string conditions,

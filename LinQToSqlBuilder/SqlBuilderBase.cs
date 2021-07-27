@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using DotNetBrightener.LinQToSqlBuilder.Adapter;
+﻿using DotNetBrightener.LinQToSqlBuilder.Adapter;
 using DotNetBrightener.LinQToSqlBuilder.Builder;
 using DotNetBrightener.LinQToSqlBuilder.Resolver;
 using DotNetBrightener.LinQToSqlBuilder.ValueObjects;
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace DotNetBrightener.LinQToSqlBuilder
 {
@@ -31,17 +31,19 @@ namespace DotNetBrightener.LinQToSqlBuilder
 
         public string[] SplitColumns => Builder.SplitColumns.ToArray();
 
-        public static void SetAdapter(SqlAdapter adapter)
+        public static void SetAdapter(DatabaseProvider provider)
         {
-            DefaultAdapter = GetAdapterInstance(adapter);
+            DefaultAdapter = GetAdapterInstance(provider);
         }
 
-        private static ISqlAdapter GetAdapterInstance(SqlAdapter adapter)
+        protected static ISqlAdapter GetAdapterInstance(DatabaseProvider provider)
         {
-            switch (adapter)
+            switch (provider)
             {
-                case SqlAdapter.SqlServer:
+                case DatabaseProvider.SqlServer:
                     return new SqlServerAdapter();
+                case DatabaseProvider.PostgreSql:
+                    return new PostgreSqlServerAdapter();
                 default:
                     throw new ArgumentException("The specified Sql Adapter was not recognized");
             }

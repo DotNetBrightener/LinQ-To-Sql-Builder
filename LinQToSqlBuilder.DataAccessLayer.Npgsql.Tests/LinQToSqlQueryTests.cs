@@ -1,30 +1,36 @@
 ﻿using System;
 using System.Linq;
 using DotNetBrightener.LinQToSqlBuilder;
+using DotNetBrightener.LinQToSqlBuilder.ValueObjects;
 using LinQToSqlBuilder.TestHelpers.Base;
 using LinQToSqlBuilder.TestHelpers.Entities;
 using NUnit.Framework;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests
+namespace LinQToSqlBuilder.DataAccessLayer.Npgsql.Tests
 {
     [TestFixture]
     public class LinQToSqlQueryTests : TestBase
     {
+        public override void Init()
+        {
+            SqlBuilder.SetDefaultProvider(DatabaseProvider.PostgreSql);
+        }
+
         [Test]
         public void QueryCount()
         {
             var query = SqlBuilder.Count<User>(_ => _.Id)
                                   .Where(_ => _.Id > 10);
 
-            Assert.AreEqual($"SELECT COUNT([dbo].[Users].[Id]) FROM [dbo].[Users] " +
-                            $"WHERE [dbo].[Users].[Id] > @Param1",
+            Assert.AreEqual($"SELECT COUNT(\"public\".\"Users\".\"Id\") FROM \"public\".\"Users\" " +
+                            $"WHERE \"public\".\"Users\".\"Id\" > @Param1",
                             query.CommandText);
 
             query = SqlBuilder.Count<User>()
-                                  .Where(_ => _.Id > 10);
+                              .Where(_ => _.Id > 10);
 
-            Assert.AreEqual($"SELECT COUNT(*) FROM [dbo].[Users] " +
-                            $"WHERE [dbo].[Users].[Id] > @Param1",
+            Assert.AreEqual($"SELECT COUNT(*) FROM \"public\".\"Users\" " +
+                            $"WHERE \"public\".\"Users\".\"Id\" > @Param1",
                             query.CommandText);
         }
 
@@ -36,9 +42,9 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
             var query = SqlBuilder.Select<User>()
                                   .Where(_ => _.Birthday > dateToCheck);
             
-            Assert.AreEqual($"SELECT [dbo].[Users].* " +
-                            $"FROM [dbo].[Users] " +
-                            $"WHERE [dbo].[Users].[Birthday] > @Param1",
+            Assert.AreEqual($"SELECT \"public\".\"Users\".* " +
+                            $"FROM \"public\".\"Users\" " +
+                            $"WHERE \"public\".\"Users\".\"Birthday\" > @Param1",
                             query.CommandText);
         }
 
@@ -49,7 +55,7 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
                                   .OrderBy(_ => _.Id)
                                   .Take(10);
 
-            Assert.AreEqual($"SELECT TOP(10) [dbo].[Users].* FROM [dbo].[Users] ORDER BY [dbo].[Users].[Id]",
+            Assert.AreEqual($"SELECT TOP(10) \"public\".\"Users\".* FROM \"public\".\"Users\" ORDER BY \"public\".\"Users\".\"Id\"",
                             query.CommandText);
         }
 
@@ -67,13 +73,13 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
                                   .OrderBy(_ => _.Id)
                                   .Take(10);
 
-            Assert.AreEqual($"SELECT TOP(10) [dbo].[Users].[Email], " +
-                            $"[dbo].[Users].[FirstName], " +
-                            $"[dbo].[Users].[LastName], " +
-                            $"[dbo].[Users].[Id] " +
-                            $"FROM [dbo].[Users] " +
-                            $"WHERE NOT [dbo].[Users].[RecordDeleted] = @Param1 " +
-                            $"ORDER BY [dbo].[Users].[Id]",
+            Assert.AreEqual($"SELECT TOP(10) \"public\".\"Users\".\"Email\", " +
+                            $"\"public\".\"Users\".\"FirstName\", " +
+                            $"\"public\".\"Users\".\"LastName\", " +
+                            $"\"public\".\"Users\".\"Id\" " +
+                            $"FROM \"public\".\"Users\" " +
+                            $"WHERE NOT \"public\".\"Users\".\"RecordDeleted\" = @Param1 " +
+                            $"ORDER BY \"public\".\"Users\".\"Id\"",
                             query.CommandText);
         }
 
@@ -87,10 +93,10 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
                                   .Skip(1);
 
 
-            Assert.AreEqual($"SELECT [dbo].[Users].* " +
-                            $"FROM [dbo].[Users] " +
-                            $"WHERE [dbo].[Users].[ModifiedDate] > @Param1 " +
-                            $"ORDER BY [dbo].[Users].[Id] " +
+            Assert.AreEqual($"SELECT \"public\".\"Users\".* " +
+                            $"FROM \"public\".\"Users\" " +
+                            $"WHERE \"public\".\"Users\".\"ModifiedDate\" > @Param1 " +
+                            $"ORDER BY \"public\".\"Users\".\"Id\" " +
                             $"OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY",
                             query.CommandText);
         }
@@ -103,7 +109,7 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
             var query = SqlBuilder.Select<User>()
                                   .Where(user => user.Email == userEmail);
 
-            Assert.AreEqual("SELECT [dbo].[Users].* FROM [dbo].[Users] WHERE [dbo].[Users].[Email] = @Param1", 
+            Assert.AreEqual("SELECT \"public\".\"Users\".* FROM \"public\".\"Users\" WHERE \"public\".\"Users\".\"Email\" = @Param1", 
                             query.CommandText);
 
             Assert.AreEqual(userEmail,
@@ -118,7 +124,7 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
             var query = SqlBuilder.SelectSingle<User>()
                                   .Where(user => user.Email == userEmail);
 
-            Assert.AreEqual("SELECT TOP(1) [dbo].[Users].* FROM [dbo].[Users] WHERE [dbo].[Users].[Email] = @Param1",
+            Assert.AreEqual("SELECT TOP(1) \"public\".\"Users\".* FROM \"public\".\"Users\" WHERE \"public\".\"Users\".\"Email\" = @Param1",
                             query.CommandText);
 
             Assert.AreEqual(userEmail,
@@ -133,9 +139,9 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
             var query = SqlBuilder.Select<User>()
                                   .Where(user => user.Email.Contains(searchTerm));
 
-            Assert.AreEqual("SELECT [dbo].[Users].* " +
-                            "FROM [dbo].[Users] " +
-                            "WHERE [dbo].[Users].[Email] LIKE @Param1",
+            Assert.AreEqual("SELECT \"public\".\"Users\".* " +
+                            "FROM \"public\".\"Users\" " +
+                            "WHERE \"public\".\"Users\".\"Email\" LIKE @Param1",
                             query.CommandText);
         }
 
@@ -149,11 +155,11 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
                                   .Join<UserGroup>((group,     g) => group.UserGroupId == g.Id)
                                   .Where(group => group.Id == groupId);
 
-            Assert.AreEqual("SELECT [dbo].[Users].*, [dbo].[UsersUserGroup].*, [dbo].[UsersGroup].* " +
-                            "FROM [dbo].[Users] " +
-                            "JOIN [dbo].[UsersUserGroup] ON [dbo].[Users].[Id] = [dbo].[UsersUserGroup].[UserId] " +
-                            "JOIN [dbo].[UsersGroup] ON [dbo].[UsersUserGroup].[UserGroupId] = [dbo].[UsersGroup].[Id] " +
-                            "WHERE [dbo].[UsersGroup].[Id] = @Param1", 
+            Assert.AreEqual("SELECT \"public\".\"Users\".*, \"public\".\"UsersUserGroup\".*, \"public\".\"UsersGroup\".* " +
+                            "FROM \"public\".\"Users\" " +
+                            "JOIN \"public\".\"UsersUserGroup\" ON \"public\".\"Users\".\"Id\" = \"public\".\"UsersUserGroup\".\"UserId\" " +
+                            "JOIN \"public\".\"UsersGroup\" ON \"public\".\"UsersUserGroup\".\"UserGroupId\" = \"public\".\"UsersGroup\".\"Id\" " +
+                            "WHERE \"public\".\"UsersGroup\".\"Id\" = @Param1", 
                             query.CommandText);
 
 
@@ -163,12 +169,12 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
                                    .Join<UserGroup>((group,     g) => group.UserGroupId == g.Id)
                                    .Where(group => group.Id == groupId);
 
-            Assert.AreEqual("SELECT [dbo].[Users].*, [dbo].[UsersUserGroup].*, [dbo].[UsersGroup].* " +
-                            "FROM [dbo].[Users] " +
-                            "JOIN [dbo].[UsersUserGroup] ON [dbo].[Users].[Id] = [dbo].[UsersUserGroup].[UserId] " +
-                            "JOIN [dbo].[UsersGroup] ON [dbo].[UsersUserGroup].[UserGroupId] = [dbo].[UsersGroup].[Id] " +
-                            "WHERE [dbo].[Users].[Email] = @Param1 " +
-                            "AND [dbo].[UsersGroup].[Id] = @Param2",
+            Assert.AreEqual("SELECT \"public\".\"Users\".*, \"public\".\"UsersUserGroup\".*, \"public\".\"UsersGroup\".* " +
+                            "FROM \"public\".\"Users\" " +
+                            "JOIN \"public\".\"UsersUserGroup\" ON \"public\".\"Users\".\"Id\" = \"public\".\"UsersUserGroup\".\"UserId\" " +
+                            "JOIN \"public\".\"UsersGroup\" ON \"public\".\"UsersUserGroup\".\"UserGroupId\" = \"public\".\"UsersGroup\".\"Id\" " +
+                            "WHERE \"public\".\"Users\".\"Email\" = @Param1 " +
+                            "AND \"public\".\"UsersGroup\".\"Id\" = @Param2",
                             query2.CommandText);
 
             //var result = new Dictionary<long, User>();
@@ -181,7 +187,7 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
             //                                                              result.Add(user.Id, user);
             //                                                          }
 
-            //                                                          result[user.Id].Groups.Add(group);
+            //                                                          result\"user.Id\".Groups.Add(group);
             //                                                          return user;
             //                                                      },
             //                                                      query.CommandParameters,
@@ -195,9 +201,9 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
             var query = SqlBuilder.Select<UserGroup>()
                                   .OrderBy(_ => _.Name);
 
-            Assert.AreEqual("SELECT [dbo].[UsersGroup].* " +
-                            "FROM [dbo].[UsersGroup] " +
-                            "ORDER BY [dbo].[UsersGroup].[Name]",
+            Assert.AreEqual("SELECT \"public\".\"UsersGroup\".* " +
+                            "FROM \"public\".\"UsersGroup\" " +
+                            "ORDER BY \"public\".\"UsersGroup\".\"Name\"",
                             query.CommandText);
         }
 
@@ -208,9 +214,9 @@ namespace LinQToSqlBuilder.DataAccessLayer.Tests
                                   .OrderByDescending(_ => _.Name);
 
 
-            Assert.AreEqual("SELECT [dbo].[UsersGroup].* " +
-                            "FROM [dbo].[UsersGroup] " +
-                            "ORDER BY [dbo].[UsersGroup].[Name] DESC",
+            Assert.AreEqual("SELECT \"public\".\"UsersGroup\".* " +
+                            "FROM \"public\".\"UsersGroup\" " +
+                            "ORDER BY \"public\".\"UsersGroup\".\"Name\" DESC",
                             query.CommandText);
         }
     }

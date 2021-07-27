@@ -3,7 +3,7 @@ using DotNetBrightener.LinQToSqlBuilder;
 using LinQToSqlBuilder.TestHelpers.Entities;
 using NUnit.Framework;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests
+namespace LinQToSqlBuilder.DataAccessLayer.Npgsql.Tests
 {
     public class LinQToSqlUpdateCommandTests
     {

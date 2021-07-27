@@ -1,28 +1,51 @@
-﻿namespace DotNetBrightener.LinQToSqlBuilder.Adapter
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
+
+namespace DotNetBrightener.LinQToSqlBuilder.Adapter
 {
     /// <summary>
     /// Provides functionality common to all supported SQL Server versions
     /// </summary>
     class SqlServerAdapterBase : SqlAdapterBase
     {
-        public string Table(string tableName)
+        protected override string OpenQuote     => "[";
+        protected override string CloseQuote    => "]";
+        public override    string DefaultSchema => "dbo";
+
+        public virtual string Table(string tableName)
         {
-            return $"[{tableName}]";
+            return $"{OpenQuote}{tableName}{OpenQuote}";
         }
 
-        public string Field(string fieldName)
+        public virtual string Field(string fieldName)
         {
-            return $"[{fieldName}]";
+            return $"{OpenQuote}{fieldName}{CloseQuote}";
         }
 
-        public string Field(string tableName, string fieldName)
+        public virtual string Field(string tableName, string fieldName)
         {
-            return $"[{tableName}].[{fieldName}]";
+            return $"{OpenQuote}{tableName}{CloseQuote}.{OpenQuote}{fieldName}{CloseQuote}";
         }
 
-        public string Parameter(string parameterId)
+        public virtual string Parameter(string parameterId)
         {
             return "@" + parameterId;
+        }
+
+        public virtual string GetTableName<T>()
+        {
+            return GetTableName(typeof(T));
+        }
+
+        public virtual string GetTableName(Type type)
+        {
+            var tableAttribute = type.GetCustomAttribute<TableAttribute>();
+
+            if (tableAttribute != null)
+                return $"{tableAttribute.Schema ?? DefaultSchema}{CloseQuote}.{OpenQuote}{tableAttribute.Name}";
+            else
+                return $"{type.Name}";
         }
     }
 }

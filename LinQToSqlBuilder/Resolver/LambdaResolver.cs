@@ -75,23 +75,19 @@ namespace DotNetBrightener.LinQToSqlBuilder.Resolver
                 return $"{memberInfo.Name}";
         }
 
-        public static string GetTableName<T>()
+        public string GetTableName<T>()
         {
             return GetTableName(typeof(T));
         }
 
-        public static string GetTableName(Type type)
+        public string GetTableName(Type type)
         {
-            var tableAttribute = type.GetCustomAttribute<TableAttribute>();
-            if (tableAttribute != null)
-                return $"{tableAttribute.Schema ?? "dbo"}].[{tableAttribute.Name}";
-            else
-                return $"{type.Name}";
+            return Builder.Adapter.GetTableName(type);
         }
 
-        private static string GetTableName(MemberExpression expression)
+        private string GetTableName(MemberExpression expression)
         {
-            return GetTableName(expression.Expression.Type);
+            return Builder.Adapter.GetTableName(expression.Expression.Type);
         }
 
         private static BinaryExpression GetBinaryExpression(Expression expression)

@@ -4,7 +4,7 @@ using LinQToSqlBuilder.TestHelpers.Base;
 using LinQToSqlBuilder.TestHelpers.Entities;
 using NUnit.Framework;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests
+namespace LinQToSqlBuilder.DataAccessLayer.Npgsql.Tests
 {
     [TestFixture]
     public class LinQToSqlInsertCommandTests : TestBase

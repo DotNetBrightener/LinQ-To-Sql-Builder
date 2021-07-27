@@ -10,7 +10,7 @@ namespace DotNetBrightener.LinQToSqlBuilder.Builder
     {
         public void InsertTo<TTo>()
         {
-            TableNames.Add(LambdaResolver.GetTableName<TTo>());
+            TableNames.Add(Adapter.GetTableName<TTo>());
         }
 
         /// <summary>

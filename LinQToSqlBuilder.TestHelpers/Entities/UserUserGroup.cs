@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests.Entities
+namespace LinQToSqlBuilder.TestHelpers.Entities
 {
     [Table("UsersUserGroup")]
     public class UserUserGroup

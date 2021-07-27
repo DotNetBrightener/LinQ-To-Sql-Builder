@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DotNetBrightener.LinQToSqlBuilder.Adapter
 {
     /// <summary>
     /// SQL adapter provides db specific functionality related to db specific SQL syntax
     /// </summary>
-    interface ISqlAdapter
+    public interface ISqlAdapter
     {
+        string DefaultSchema { get; }
+
         string QueryString(string selection, string source, string conditions, 
             string order, string grouping, string having);
 
@@ -29,6 +32,10 @@ namespace DotNetBrightener.LinQToSqlBuilder.Adapter
         string Field(string tableName, string fieldName);
 
         string Parameter(string parameterId);
+
+        string GetTableName<T>();
+
+        string GetTableName(Type type);
     }
 
     enum SqlOperations

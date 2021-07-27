@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests.Entities
+namespace LinQToSqlBuilder.TestHelpers.Entities
 {
     [Table("UsersGroup")]
     public class UserGroup

@@ -1,15 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using DotNetBrightener.LinQToSqlBuilder.Adapter;
+﻿using DotNetBrightener.LinQToSqlBuilder.Adapter;
 using DotNetBrightener.LinQToSqlBuilder.Builder;
 using DotNetBrightener.LinQToSqlBuilder.Resolver;
 using DotNetBrightener.LinQToSqlBuilder.ValueObjects;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace DotNetBrightener.LinQToSqlBuilder
 {
     public static class SqlBuilder
     {
+        /// <summary>
+        ///     Set the default database provider
+        /// </summary>
+        /// <param name="provider">
+        ///     The database provider
+        /// </param>
+        public static void SetDefaultProvider(DatabaseProvider provider)
+        {
+            SqlBuilderBase.SetAdapter(provider);
+        }
+
         /// <summary>
         /// Prepares an insert command to do the insert operation for one record of specified <typeparamref name="T"/> 
         /// </summary>
@@ -165,9 +176,32 @@ namespace DotNetBrightener.LinQToSqlBuilder
     /// <typeparam name="T">The type of entity that associates to the table, used to perform the table and field name resolution</typeparam>
     public class SqlBuilder<T> : SqlBuilderBase
     {
-        public SqlBuilder()
+        /// <summary>
+        ///     Instantiates a new instance of <see cref="SqlBuilder{T}"/> with default adapter
+        /// </summary>
+        /// <remarks>
+        ///     The <see cref="SqlBuilderBase.DefaultAdapter"/> can be configured by calling <see cref="SqlBuilderBase.SetAdapter"/> method
+        /// </remarks>
+        public SqlBuilder(): this(DefaultAdapter)
         {
-            Builder = new SqlQueryBuilder(LambdaResolver.GetTableName<T>(), DefaultAdapter);
+        }
+
+        /// <summary>
+        ///     Instantiates a new instance of <see cref="SqlBuilder{T}"/> with a given <see cref="DatabaseProvider"/>
+        /// </summary>
+        public SqlBuilder(DatabaseProvider provider): this(GetAdapterInstance(provider))
+        {
+        }
+
+        /// <summary>
+        ///     Instantiates a new instance of <see cref="SqlBuilder{T}"/> with a given <see cref="ISqlAdapter"/>
+        /// </summary>
+        /// <param name="adapter">
+        ///     The adapter that provides the functionalities to convert the LinQ expressions to specific database provider syntax
+        /// </param>
+        public SqlBuilder(ISqlAdapter adapter)
+        {
+            Builder  = new SqlQueryBuilder(adapter.GetTableName<T>(), adapter);
             Resolver = new LambdaResolver(Builder);
         }
 
