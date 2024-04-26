@@ -1,11 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30104.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinQToSqlBuilder.DataAccessLayer.Tests", "LinQToSqlBuilder.DataAccessLayer.Tests\LinQToSqlBuilder.DataAccessLayer.Tests.csproj", "{CE267788-C95C-4A76-A150-1F747E0CC5EE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinQToSqlBuilder", "LinQToSqlBuilder\LinQToSqlBuilder.csproj", "{7DEBAE85-F889-4E8B-9F18-24A0AEE7EC2D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".builds", ".builds", "{C58CDEEC-5A84-44C7-9189-92F1626CEB7B}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		LICENSE = LICENSE
+		readme.md = readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

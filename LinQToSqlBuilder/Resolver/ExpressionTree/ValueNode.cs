@@ -1,7 +1,6 @@
-﻿namespace DotNetBrightener.LinQToSqlBuilder.Resolver.ExpressionTree
+﻿namespace DotNetBrightener.LinQToSqlBuilder.Resolver.ExpressionTree;
+
+class ValueNode : Node
 {
-    class ValueNode : Node
-    {
-        public object Value { get; set; }
-    }
+    public object Value { get; set; }
 }

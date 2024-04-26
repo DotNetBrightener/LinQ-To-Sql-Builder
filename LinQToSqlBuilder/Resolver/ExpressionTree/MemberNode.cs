@@ -1,8 +1,7 @@
-﻿namespace DotNetBrightener.LinQToSqlBuilder.Resolver.ExpressionTree
+﻿namespace DotNetBrightener.LinQToSqlBuilder.Resolver.ExpressionTree;
+
+class MemberNode : Node
 {
-    class MemberNode : Node
-    {
-        public string TableName { get; set; }
-        public string FieldName { get; set; }
-    }
+    public string TableName { get; set; }
+    public string FieldName { get; set; }
 }

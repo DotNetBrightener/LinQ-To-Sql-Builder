@@ -1,10 +1,9 @@
 ﻿using System.Linq.Expressions;
 
-namespace DotNetBrightener.LinQToSqlBuilder.Resolver.ExpressionTree
+namespace DotNetBrightener.LinQToSqlBuilder.Resolver.ExpressionTree;
+
+class SingleOperationNode : Node
 {
-    class SingleOperationNode : Node
-    {
-        public ExpressionType Operator { get; set; }
-        public Node Child { get; set; }
-    }
+    public ExpressionType Operator { get; set; }
+    public Node           Child    { get; set; }
 }

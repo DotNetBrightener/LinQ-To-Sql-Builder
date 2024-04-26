@@ -1,0 +1,63 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Authors>DotNet Brightener &lt;admin@dotnetbrightener.com&gt;</Authors>
+		<Company>DotNet Brightener</Company>
+
+		<Copyright>© 2017 - $([System.DateTime]::Now.ToString(yyyy)) $(Company)</Copyright>
+
+		<LangVersion>latest</LangVersion>
+		<IncludeSymbols>true</IncludeSymbols>
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageOutputPath>$(SolutionDir)/nupkg</PackageOutputPath>
+		<RepositoryUrl>https://github.com/dotnetbrightener/dotnet-brightener-framework</RepositoryUrl>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+		<PackageId Condition="!$(MSBuildProjectName.StartsWith('DotNetBrightener.')) AND !$(MSBuildProjectName.StartsWith('VampireCoder.'))">DotNetBrightener.$(MSBuildProjectName)</PackageId>
+
+		<PackageTags>DotNetBrightener; VampireCoder;</PackageTags>
+
+		<NoWarn>$(NoWarn);0168;1701;1702;1591;1574;1723;1998;1573;RCS1194;CS8618;</NoWarn>
+		<!--<PackageIcon Condition="$(MSBuildProjectName.StartsWith('DotNetBrightener.'))">dotnet-brightener-logo.png</PackageIcon>-->
+		<PackageIcon>vampire-coder-logo.jpg</PackageIcon>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageReadmeFile Condition="Exists('docs\readme.md')">readme.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<!-- Version settings -->
+	<PropertyGroup>
+		<FileVersionPotion>$([System.DateTime]::Now.DayOfYear)$([System.DateTime]::Now.ToString(HH))</FileVersionPotion>
+		<BuildNumber>$([System.DateTime]::Now.ToString(yyMMddHH))04</BuildNumber>
+
+		<VersionPrefix>2024.0.12.$(FileVersionPotion)</VersionPrefix>
+
+		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
+		<FileVersion>$(VersionPrefix)</FileVersion>
+	</PropertyGroup>
+
+	<!-- Version settings for Debugging -->
+	<PropertyGroup Condition="'$(Configuration)' != 'Release'">
+		<VersionSuffix>alpha</VersionSuffix>
+
+		<VersionSuffix Condition="'$(VersionSuffix)' != '' AND '$(BuildNumber)' != ''">$(VersionSuffix)-$(BuildNumber)</VersionSuffix>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<DefineConstants>TRACE;RELEASE</DefineConstants>
+		<PackageOutputPath>$(SolutionDir)/nupkg_release</PackageOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(AssemblyName).Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!--<None Condition="$(PackageId.StartsWith('DotNetBrightener.'))" Include="..\..\..\dotnet-brightener-logo.png"  Pack="true" PackagePath="\" />-->
+		<None Include="..\vampire-coder-logo.jpg"  Pack="true" PackagePath="\" />
+		<None Include="..\LICENSE"  Pack="true" PackagePath="\" />
+		<None Condition="Exists('docs\readme.md')" Include="docs\readme.md" Pack="true" PackagePath="\"/>
+	</ItemGroup>
+</Project>
