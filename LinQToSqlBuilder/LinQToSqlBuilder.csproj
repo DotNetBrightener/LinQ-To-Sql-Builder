@@ -8,9 +8,4 @@
 		<RootNamespace>DotNetBrightener.LinQToSqlBuilder</RootNamespace>
 	</PropertyGroup>
 
-	<PropertyGroup>
-	  <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-		<NoWarn>1701;1702;1591;1574;1723</NoWarn>
-	</PropertyGroup>
-
 </Project>
