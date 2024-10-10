@@ -1,14 +1,13 @@
 ﻿using DotNetBrightener.LinQToSqlBuilder;
-using LinQToSqlBuilder.DataAccessLayer.Tests.Base;
+using FluentAssertions;
 using LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
-using NUnit.Framework;
+using Xunit;
 
 namespace LinQToSqlBuilder.DataAccessLayer.Tests;
 
-[TestFixture]
-public class LinQToSqlInsertCommandTests : TestBase
+public class LinQToSqlInsertCommandTests
 {
-    [Test]
+    [Fact]
     public void InsertSingleRecord()
     {
         var query = SqlBuilder.Insert<UserGroup>(_ => new UserGroup
@@ -20,12 +19,13 @@ public class LinQToSqlInsertCommandTests : TestBase
             IsDeleted   = false
         });
 
-        Assert.That(query.CommandText,
-                    Is.EqualTo("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
-                               "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5)"));
+        query.CommandText
+             .Should()
+             .Be("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
+                 "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5)");
     }
 
-    [Test]
+    [Fact]
     public void InsertSingleRecordWithOutputIdentity()
     {
         var query = SqlBuilder.Insert<UserGroup>(_ => new UserGroup
@@ -38,14 +38,14 @@ public class LinQToSqlInsertCommandTests : TestBase
                                })
                               .OutputIdentity();
 
-        Assert.That(query.CommandText,
-                    Is.EqualTo("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
-                               "OUTPUT Inserted.[Id] " +
-                               "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5)"
-                              ));
+        query.CommandText
+             .Should()
+             .Be("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
+                 "OUTPUT Inserted.[Id] " +
+                 "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5)");
     }
 
-    [Test]
+    [Fact]
     public void InsertMultipleRecords()
     {
         var query = SqlBuilder.InsertMany<UserGroup>(_ => new[]
@@ -77,16 +77,15 @@ public class LinQToSqlInsertCommandTests : TestBase
         });
 
 
-        Assert.That(query.CommandText,
-                    Is
-                       .EqualTo("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
-                                "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5), " +
-                                "(@Param6, @Param7, @Param8, @Param9, @Param10), " +
-                                "(@Param11, @Param12, @Param13, @Param14, @Param15)"
-                               ));
+        query.CommandText
+             .Should()
+             .Be("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
+                 "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5), " +
+                 "(@Param6, @Param7, @Param8, @Param9, @Param10), " +
+                 "(@Param11, @Param12, @Param13, @Param14, @Param15)");
     }
 
-    [Test]
+    [Fact]
     public void InsertRecordFromAnotherTables()
     {
         var query = SqlBuilder.InsertFrom<UserGroup, CloneUserGroup>(userGroup => new CloneUserGroup()
@@ -101,17 +100,18 @@ public class LinQToSqlInsertCommandTests : TestBase
                                })
                               .Where(group => group.IsDeleted == false);
 
-        Assert.That(query.CommandText,
-                    Is.EqualTo("INSERT INTO [dbo].[CloneUserGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted], [IsUndeletable], [OriginalId]) " +
-                               "SELECT " +
-                               "@Param1 as [CreatedBy], " +
-                               "@Param2 as [CreatedDate], " +
-                               "[dbo].[UsersGroup].[Description] as [Description], " +
-                               "[dbo].[UsersGroup].[Name] as [Name], " +
-                               "[dbo].[UsersGroup].[IsDeleted] as [IsDeleted], " +
-                               "[dbo].[UsersGroup].[IsUndeletable] as [IsUndeletable], " +
-                               "[dbo].[UsersGroup].[Id] as [OriginalId] " +
-                               "FROM [dbo].[UsersGroup] " +
-                               "WHERE [dbo].[UsersGroup].[IsDeleted] = @Param3"));
+        query.CommandText
+             .Should()
+             .Be("INSERT INTO [dbo].[CloneUserGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted], [IsUndeletable], [OriginalId]) " +
+                 "SELECT " +
+                 "@Param1 as [CreatedBy], " +
+                 "@Param2 as [CreatedDate], " +
+                 "[dbo].[UsersGroup].[Description] as [Description], " +
+                 "[dbo].[UsersGroup].[Name] as [Name], " +
+                 "[dbo].[UsersGroup].[IsDeleted] as [IsDeleted], " +
+                 "[dbo].[UsersGroup].[IsUndeletable] as [IsUndeletable], " +
+                 "[dbo].[UsersGroup].[Id] as [OriginalId] " +
+                 "FROM [dbo].[UsersGroup] " +
+                 "WHERE [dbo].[UsersGroup].[IsDeleted] = @Param3");
     }
 }

@@ -1,12 +1,13 @@
 ﻿using DotNetBrightener.LinQToSqlBuilder;
+using FluentAssertions;
 using LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
-using NUnit.Framework;
+using Xunit;
 
 namespace LinQToSqlBuilder.DataAccessLayer.Tests;
 
 public class LinQToSqlUpdateCommandTests
 {
-    [Test]
+    [Fact]
     public void UpdateByFieldValue()
     {
         //using var scope = new TransactionScope();
@@ -21,12 +22,12 @@ public class LinQToSqlUpdateCommandTests
                                })
                               .Where(user => user.Id == userId);
 
-        Assert.That(query.CommandText,
-                    Is.EqualTo("UPDATE [dbo].[Users] " +
-                               "SET " +
-                               "[Email] = REPLACE([Email], @Param1, @Param2), " +
-                               "[LastChangePassword] = @Param3, " +
-                               "[FailedLogIns] = [FailedLogIns] - @Param4 " +
-                               "WHERE [dbo].[Users].[Id] = @Param5"));
+        query.CommandText.Should()
+             .Be("UPDATE [dbo].[Users] " +
+                 "SET " +
+                 "[Email] = REPLACE([Email], @Param1, @Param2), " +
+                 "[LastChangePassword] = @Param3, " +
+                 "[FailedLogIns] = [FailedLogIns] - @Param4 " +
+                 "WHERE [dbo].[Users].[Id] = @Param5");
     }
 }

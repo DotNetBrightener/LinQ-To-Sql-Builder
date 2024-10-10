@@ -1,14 +1,14 @@
-﻿using System.Linq.Expressions;
-using DotNetBrightener.LinQToSqlBuilder;
+﻿using DotNetBrightener.LinQToSqlBuilder;
 using LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
-using NUnit.Framework;
+using System.Linq.Expressions;
+using FluentAssertions;
+using Xunit;
 
 namespace LinQToSqlBuilder.DataAccessLayer.Tests;
 
-[TestFixture]
 public class LinQToSqlDeleteCommandTests
 {
-    [Test]
+    [Fact]
     public void DeleteByFieldValue()
     {
         var testCases = new List<TestCase>()
@@ -53,13 +53,15 @@ public class LinQToSqlDeleteCommandTests
         {
             var query = SqlBuilder.Delete<CloneUserGroup>(testCase.Expression);
 
-            Assert.That(query.CommandText,
-                        Is.EqualTo(testCase.ExpectedQueryString));
+            query.CommandText
+                 .Should()
+                 .Be(testCase.ExpectedQueryString);
 
             for (var i = 0; i < testCase.ExpectedParamValues.Count; i++)
             {
-                Assert.That(query.CommandParameters.Values.ElementAt(i),
-                            Is.EqualTo(testCase.ExpectedParamValues[i]));
+                query.CommandParameters.Values.ElementAt(i)
+                     .Should()
+                     .Be(testCase.ExpectedParamValues[i]);
             }
         }
     }
