@@ -1,7 +1,7 @@
 ﻿using DotNetBrightener.LinQToSqlBuilder;
 using LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
+using Shouldly;
 using System.Linq.Expressions;
-using FluentAssertions;
 using Xunit;
 
 namespace LinQToSqlBuilder.DataAccessLayer.Tests;
@@ -54,14 +54,12 @@ public class LinQToSqlDeleteCommandTests
             var query = SqlBuilder.Delete<CloneUserGroup>(testCase.Expression);
 
             query.CommandText
-                 .Should()
-                 .Be(testCase.ExpectedQueryString);
+                 .ShouldBe(testCase.ExpectedQueryString);
 
             for (var i = 0; i < testCase.ExpectedParamValues.Count; i++)
             {
                 query.CommandParameters.Values.ElementAt(i)
-                     .Should()
-                     .Be(testCase.ExpectedParamValues[i]);
+                     .ShouldBe(testCase.ExpectedParamValues[i]);
             }
         }
     }

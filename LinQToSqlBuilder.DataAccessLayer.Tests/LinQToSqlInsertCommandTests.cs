@@ -1,6 +1,6 @@
 ﻿using DotNetBrightener.LinQToSqlBuilder;
-using FluentAssertions;
 using LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
+using Shouldly;
 using Xunit;
 
 namespace LinQToSqlBuilder.DataAccessLayer.Tests;
@@ -20,9 +20,8 @@ public class LinQToSqlInsertCommandTests
         });
 
         query.CommandText
-             .Should()
-             .Be("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
-                 "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5)");
+             .ShouldBe("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
+                       "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5)");
     }
 
     [Fact]
@@ -39,10 +38,9 @@ public class LinQToSqlInsertCommandTests
                               .OutputIdentity();
 
         query.CommandText
-             .Should()
-             .Be("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
-                 "OUTPUT Inserted.[Id] " +
-                 "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5)");
+             .ShouldBe("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
+                       "OUTPUT Inserted.[Id] " +
+                       "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5)");
     }
 
     [Fact]
@@ -78,11 +76,10 @@ public class LinQToSqlInsertCommandTests
 
 
         query.CommandText
-             .Should()
-             .Be("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
-                 "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5), " +
-                 "(@Param6, @Param7, @Param8, @Param9, @Param10), " +
-                 "(@Param11, @Param12, @Param13, @Param14, @Param15)");
+             .ShouldBe("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
+                       "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5), " +
+                       "(@Param6, @Param7, @Param8, @Param9, @Param10), " +
+                       "(@Param11, @Param12, @Param13, @Param14, @Param15)");
     }
 
     [Fact]
@@ -101,17 +98,16 @@ public class LinQToSqlInsertCommandTests
                               .Where(group => group.IsDeleted == false);
 
         query.CommandText
-             .Should()
-             .Be("INSERT INTO [dbo].[CloneUserGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted], [IsUndeletable], [OriginalId]) " +
-                 "SELECT " +
-                 "@Param1 as [CreatedBy], " +
-                 "@Param2 as [CreatedDate], " +
-                 "[dbo].[UsersGroup].[Description] as [Description], " +
-                 "[dbo].[UsersGroup].[Name] as [Name], " +
-                 "[dbo].[UsersGroup].[IsDeleted] as [IsDeleted], " +
-                 "[dbo].[UsersGroup].[IsUndeletable] as [IsUndeletable], " +
-                 "[dbo].[UsersGroup].[Id] as [OriginalId] " +
-                 "FROM [dbo].[UsersGroup] " +
-                 "WHERE [dbo].[UsersGroup].[IsDeleted] = @Param3");
+             .ShouldBe("INSERT INTO [dbo].[CloneUserGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted], [IsUndeletable], [OriginalId]) " +
+                       "SELECT " +
+                       "@Param1 as [CreatedBy], " +
+                       "@Param2 as [CreatedDate], " +
+                       "[dbo].[UsersGroup].[Description] as [Description], " +
+                       "[dbo].[UsersGroup].[Name] as [Name], " +
+                       "[dbo].[UsersGroup].[IsDeleted] as [IsDeleted], " +
+                       "[dbo].[UsersGroup].[IsUndeletable] as [IsUndeletable], " +
+                       "[dbo].[UsersGroup].[Id] as [OriginalId] " +
+                       "FROM [dbo].[UsersGroup] " +
+                       "WHERE [dbo].[UsersGroup].[IsDeleted] = @Param3");
     }
 }

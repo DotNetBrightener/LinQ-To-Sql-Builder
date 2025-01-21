@@ -1,6 +1,6 @@
 ﻿using DotNetBrightener.LinQToSqlBuilder;
-using FluentAssertions;
 using LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
+using Shouldly;
 using Xunit;
 
 namespace LinQToSqlBuilder.DataAccessLayer.Tests;
@@ -22,12 +22,11 @@ public class LinQToSqlUpdateCommandTests
                                })
                               .Where(user => user.Id == userId);
 
-        query.CommandText.Should()
-             .Be("UPDATE [dbo].[Users] " +
-                 "SET " +
-                 "[Email] = REPLACE([Email], @Param1, @Param2), " +
-                 "[LastChangePassword] = @Param3, " +
-                 "[FailedLogIns] = [FailedLogIns] - @Param4 " +
-                 "WHERE [dbo].[Users].[Id] = @Param5");
+        query.CommandText.ShouldBe("UPDATE [dbo].[Users] " +
+                                   "SET " +
+                                   "[Email] = REPLACE([Email], @Param1, @Param2), " +
+                                   "[LastChangePassword] = @Param3, " +
+                                   "[FailedLogIns] = [FailedLogIns] - @Param4 " +
+                                   "WHERE [dbo].[Users].[Id] = @Param5");
     }
 }
