@@ -9,7 +9,7 @@ namespace DotNetBrightener.LinQToSqlBuilder.Resolver;
 /// <summary>
 /// Provides methods to perform resolution to SQL expressions for INSERT INTO query from given lambda expressions
 /// </summary>
-partial class LambdaResolver
+internal partial class LambdaResolver
 {
     /// <summary>
     /// Prepares an INSERT INTO method which expression to copy values from another table
@@ -197,13 +197,13 @@ partial class LambdaResolver
 
         }
     }
-        
-    void BuildInsertAssignmentSql(string columnName, MemberNode sourceNode)
+
+    private void BuildInsertAssignmentSql(string columnName, MemberNode sourceNode)
     {
         Builder.AssignInsertFieldFromSource(columnName, sourceNode.TableName, sourceNode.FieldName, _operationDictionary[ExpressionType.Equal]);
     }
 
-    void BuildInsertAssignmentSql(string columnName, Node sourceNode)
+    private void BuildInsertAssignmentSql(string columnName, Node sourceNode)
     {
         throw new ArgumentException($"Unsupported resolution of Node type");
     }

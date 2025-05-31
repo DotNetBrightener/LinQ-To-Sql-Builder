@@ -1,6 +1,6 @@
 ﻿namespace DotNetBrightener.LinQToSqlBuilder.Adapter;
 
-class SqlServerAdapter : SqlServerAdapterBase, ISqlAdapter
+internal class SqlServerAdapter : SqlServerAdapterBase, ISqlAdapter
 {
     public string QueryStringPage(string source,   string selection, string conditions, string order,
                                   int    pageSize, int    pageIndex = 0)

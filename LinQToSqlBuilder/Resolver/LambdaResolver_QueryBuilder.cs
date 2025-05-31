@@ -7,14 +7,14 @@ namespace DotNetBrightener.LinQToSqlBuilder.Resolver;
 /// <summary>
 /// Provides methods to perform resolution to SQL expressions for SELECT query from given lambda expressions
 /// </summary>
-partial class LambdaResolver
+internal partial class LambdaResolver
 {
-    void BuildSql(Node node)
+    private void BuildSql(Node node)
     {
         BuildSql((dynamic)node);
     }
 
-    void BuildSql(LikeNode node)
+    private void BuildSql(LikeNode node)
     {
         if(node.Method == LikeMethod.Equals)
         {
@@ -40,24 +40,24 @@ partial class LambdaResolver
         }
     }
 
-    void BuildSql(OperationNode node)
+    private void BuildSql(OperationNode node)
     {
         BuildSql((dynamic)node.Left, (dynamic)node.Right, node.Operator);
     }
 
-    void BuildSql(MemberNode memberNode)
+    private void BuildSql(MemberNode memberNode)
     {
         Builder.QueryByField(memberNode.TableName, memberNode.FieldName, _operationDictionary[ExpressionType.Equal], true);
     }
 
-    void BuildSql(SingleOperationNode node)
+    private void BuildSql(SingleOperationNode node)
     {
         if(node.Operator == ExpressionType.Not)
             Builder.Not();
         BuildSql(node.Child);
     }
 
-    void BuildSql(MemberNode memberNode, ValueNode valueNode, ExpressionType op)
+    private void BuildSql(MemberNode memberNode, ValueNode valueNode, ExpressionType op)
     {
         if(valueNode.Value == null)
         {
@@ -69,17 +69,17 @@ partial class LambdaResolver
         }
     }
 
-    void BuildSql(ValueNode valueNode, MemberNode memberNode, ExpressionType op)
+    private void BuildSql(ValueNode valueNode, MemberNode memberNode, ExpressionType op)
     {
         BuildSql(memberNode, valueNode, op);
     }
 
-    void BuildSql(MemberNode leftMember, MemberNode rightMember, ExpressionType op)
+    private void BuildSql(MemberNode leftMember, MemberNode rightMember, ExpressionType op)
     {
         Builder.QueryByFieldComparison(leftMember.TableName, leftMember.FieldName, _operationDictionary[op], rightMember.TableName, rightMember.FieldName);
     }
 
-    void BuildSql(SingleOperationNode leftMember, Node rightMember, ExpressionType op)
+    private void BuildSql(SingleOperationNode leftMember, Node rightMember, ExpressionType op)
     {
         if (leftMember.Operator == ExpressionType.Not)              
             BuildSql(leftMember as Node, rightMember, op);
@@ -87,12 +87,12 @@ partial class LambdaResolver
             BuildSql((dynamic)leftMember.Child, (dynamic)rightMember, op);
     }
 
-    void BuildSql(Node leftMember, SingleOperationNode rightMember, ExpressionType op)
+    private void BuildSql(Node leftMember, SingleOperationNode rightMember, ExpressionType op)
     {
         BuildSql(rightMember, leftMember, op);
     }
 
-    void BuildSql(Node leftNode, Node rightNode, ExpressionType op)
+    private void BuildSql(Node leftNode, Node rightNode, ExpressionType op)
     {
         Builder.BeginExpression();
         BuildSql((dynamic)leftNode);
@@ -101,7 +101,7 @@ partial class LambdaResolver
         Builder.EndExpression();
     }
 
-    void ResolveNullValue(MemberNode memberNode, ExpressionType op)
+    private void ResolveNullValue(MemberNode memberNode, ExpressionType op)
     {
         switch (op)
         {
@@ -114,7 +114,7 @@ partial class LambdaResolver
         }
     }
 
-    void ResolveSingleOperation(ExpressionType op)
+    private void ResolveSingleOperation(ExpressionType op)
     {
         switch (op)
         {
@@ -123,8 +123,8 @@ partial class LambdaResolver
                 break;
         }
     }
-        
-    void ResolveOperation(ExpressionType op)
+
+    private void ResolveOperation(ExpressionType op)
     {
         switch (op)
         {

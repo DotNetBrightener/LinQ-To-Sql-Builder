@@ -2,7 +2,7 @@
 
 namespace DotNetBrightener.LinQToSqlBuilder.Resolver.ExpressionTree;
 
-class OperationNode : Node
+internal class OperationNode : Node
 {
     public ExpressionType Operator { get; set; }
     public Node           Left     { get; set; }

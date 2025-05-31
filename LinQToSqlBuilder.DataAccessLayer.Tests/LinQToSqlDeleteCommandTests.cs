@@ -65,7 +65,7 @@ public class LinQToSqlDeleteCommandTests
     }
 }
 
-class TestCase
+internal class TestCase
 {
     public Expression<Func<CloneUserGroup, bool>> Expression;
     public string                                 ExpectedQueryString;

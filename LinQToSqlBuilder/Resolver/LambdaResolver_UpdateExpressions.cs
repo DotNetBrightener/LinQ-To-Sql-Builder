@@ -2,7 +2,7 @@
 
 namespace DotNetBrightener.LinQToSqlBuilder.Resolver;
 
-partial class LambdaResolver
+internal partial class LambdaResolver
 {
     public void Update<T>(Expression<Func<T, object>> expression)
     {

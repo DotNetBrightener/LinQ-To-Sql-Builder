@@ -6,7 +6,7 @@ namespace DotNetBrightener.LinQToSqlBuilder.Resolver;
 /// <summary>
 /// Provides methods to perform resolution to SQL expressions for SELECT, JOIN, ORDER BY query from given lambda expressions
 /// </summary>
-partial class LambdaResolver
+internal partial class LambdaResolver
 {
     public void Join<T1, T2>(Expression<Func<T1, T2, bool>> expression)
     {

@@ -3,7 +3,7 @@
 /// <summary>
 /// SQL adapter provides db specific functionality related to db specific SQL syntax
 /// </summary>
-interface ISqlAdapter
+internal interface ISqlAdapter
 {
     string QueryString(string selection, string source,   string conditions, 
                        string order,     string grouping, string having);
@@ -29,7 +29,7 @@ interface ISqlAdapter
     string Parameter(string parameterId);
 }
 
-enum SqlOperations
+internal enum SqlOperations
 {
     Query,
     Insert,

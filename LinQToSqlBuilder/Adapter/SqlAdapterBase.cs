@@ -3,7 +3,7 @@
 /// <summary>
 /// Generates the SQL queries that are compatible to all supported databases
 /// </summary>
-class SqlAdapterBase
+internal class SqlAdapterBase
 {
     public string QueryString(string selection,
                               string source,
