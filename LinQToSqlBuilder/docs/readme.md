@@ -1,6 +1,6 @@
 # LinQ to SQL Builder - small .NET library supports creating SQL queries and commands in a strongly typed fashion.
 
-&copy; 2024 [DotNet Brightener](mailto:admin@dotnetbrightener.com)
+&copy; 2025 [DotNet Brightener](mailto:admin@dotnetbrightener.com)
 
 ![NuGet Version](https://img.shields.io/nuget/v/DotNetBrightener.LinQToSqlBuilder)
 
