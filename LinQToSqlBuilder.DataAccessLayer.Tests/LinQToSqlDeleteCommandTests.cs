@@ -69,5 +69,5 @@ internal class TestCase
 {
     public Expression<Func<CloneUserGroup, bool>> Expression;
     public string                                 ExpectedQueryString;
-    public List<object>                           ExpectedParamValues = new List<object>();
+    public List<object>                           ExpectedParamValues = [];
 }
