@@ -1,5 +1,3 @@
 ﻿namespace DotNetBrightener.LinQToSqlBuilder.Resolver.ExpressionTree;
 
-internal abstract class Node
-{
-}
+internal abstract class Node;
