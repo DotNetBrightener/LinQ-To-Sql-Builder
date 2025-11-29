@@ -7,6 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Bogus" />
 		<PackageReference Include="Dapper" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="MSTest.TestAdapter" />
@@ -15,7 +16,9 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.Data.SqlClient" />
 		<PackageReference Include="Shouldly" />
+		<PackageReference Include="Testcontainers.MsSql" />
 		<PackageReference Include="xunit" />
 		<PackageReference Include="xunit.runner.visualstudio">
 			<PrivateAssets>all</PrivateAssets>
@@ -24,6 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\TestHelpers\DotNetBrightener.TestHelpers\DotNetBrightener.TestHelpers.csproj" />
 		<ProjectReference Include="..\LinQToSqlBuilder.Mssql\LinQToSqlBuilder.Mssql.csproj" />
 	</ItemGroup>
 
