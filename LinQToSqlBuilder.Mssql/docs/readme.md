@@ -1,52 +1,42 @@
-# LinQ to SQL Builder - PostgreSQL Provider
+# LinQ to SQL Builder - SQL Server Provider
 
-PostgreSQL (Npgsql) provider for the LinQ to SQL Builder library.
+SQL Server (MSSQL) provider for the LinQ to SQL Builder library.
 
 &copy; 2025 [DotNet Brightener](mailto:admin@dotnetbrightener.com)
 
-![NuGet Version](https://img.shields.io/nuget/v/DotNetBrightener.LinQToSqlBuilder.Npgsql)
+![NuGet Version](https://img.shields.io/nuget/v/DotNetBrightener.LinQToSqlBuilder.Mssql)
 
 ## Overview
 
-This package provides PostgreSQL-specific SQL generation for the LinQ to SQL Builder library. It implements the `ISqlAdapter` interface to generate PostgreSQL compatible queries with proper syntax for identifiers, pagination, and identity output.
+This package provides SQL Server-specific SQL generation for the LinQ to SQL Builder library. It implements the `ISqlAdapter` interface to generate SQL Server compatible queries with proper syntax for identifiers, pagination, and identity output.
 
-### PostgreSQL-Specific Syntax
+### SQL Server-Specific Syntax
 
-| Feature | PostgreSQL Syntax |
+| Feature | SQL Server Syntax |
 |---------|------------------|
-| **Schema** | `"public"` |
-| **Identifier quoting** | `"Table"."Column"` |
-| **Pagination** | `LIMIT n OFFSET m` |
-| **Top N records** | `SELECT ... LIMIT n` |
-| **Identity output** | `RETURNING "Id"` |
-
-### SQL Server vs PostgreSQL Comparison
-
-| Feature | SQL Server | PostgreSQL |
-|---------|------------|------------|
-| **Identifier quoting** | `[Table].[Column]` | `"Table"."Column"` |
-| **Schema** | `[dbo]` | `"public"` |
-| **Pagination** | `OFFSET n ROWS FETCH NEXT m ROWS ONLY` | `LIMIT m OFFSET n` |
-| **Top N** | `SELECT TOP(n)` | `SELECT ... LIMIT n` |
-| **Identity output** | `OUTPUT Inserted.[Id]` | `RETURNING "Id"` |
+| **Schema** | `[dbo]` |
+| **Identifier quoting** | `[Table].[Column]` |
+| **Pagination** | `OFFSET n ROWS FETCH NEXT m ROWS ONLY` |
+| **Top N records** | `SELECT TOP(n)` |
+| **Identity output** | `OUTPUT Inserted.[Id]` |
 
 ## Installation
 
 ```bash
-dotnet add package DotNetBrightener.LinQToSqlBuilder.Npgsql
+dotnet add package DotNetBrightener.LinQToSqlBuilder.Mssql
 ```
 
 This package automatically includes the core `DotNetBrightener.LinQToSqlBuilder` package as a dependency.
 
 ## Initialization
 
-Initialize the PostgreSQL adapter once at application startup before using any `SqlBuilder` methods:
+Initialize the SQL Server adapter once at application startup before using any `SqlBuilder` methods:
 
 ```csharp
-using DotNetBrightener.LinQToSqlBuilder.Npgsql;
+using DotNetBrightener.LinQToSqlBuilder.Mssql;
 
 // Call once at application startup (e.g., in Program.cs or Startup.cs)
-NpgsqlSqlBuilder.Initialize();
+SqlServerSqlBuilder.Initialize();
 ```
 
 ## Usage Examples
@@ -59,8 +49,7 @@ var query = SqlBuilder.Select<User>()
                       .Take(10);
 
 // Generated SQL:
-// SELECT "public"."User".* FROM "public"."User"
-// ORDER BY "public"."User"."RegistrationDate" LIMIT 10
+// SELECT TOP(10) [dbo].[User].* FROM [dbo].[User] ORDER BY [dbo].[User].[RegistrationDate]
 ```
 
 ### Select with Pagination
@@ -72,8 +61,9 @@ var query = SqlBuilder.Select<User>()
                       .Take(10);
 
 // Generated SQL:
-// SELECT "public"."User".* FROM "public"."User"
-// ORDER BY "public"."User"."RegistrationDate" LIMIT 10 OFFSET 20
+// SELECT [dbo].[User].* FROM [dbo].[User] 
+// ORDER BY [dbo].[User].[RegistrationDate] 
+// OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY
 ```
 
 ### Insert with Output Identity
@@ -88,8 +78,8 @@ var query = SqlBuilder.Insert<UserGroup>(_ => new UserGroup
             .OutputIdentity();
 
 // Generated SQL:
-// INSERT INTO "public"."UserGroup" ("Name", "Description", "IsDeleted")
-// VALUES (@Param1, @Param2, @Param3) RETURNING "Id"
+// INSERT INTO [dbo].[UserGroup] ([Name], [Description], [IsDeleted]) 
+// OUTPUT Inserted.[Id] VALUES (@Param1, @Param2, @Param3)
 
 var newId = Connection.ExecuteScalar<long>(query.CommandText, query.CommandParameters);
 ```
@@ -105,8 +95,8 @@ var query = SqlBuilder.Update<User>(_ => new User
                       .Where(user => user.Id == userId);
 
 // Generated SQL:
-// UPDATE "public"."User" SET "Email" = @Param1, "ModifiedDate" = @Param2
-// WHERE "public"."User"."Id" = @Param3
+// UPDATE [dbo].[User] SET [Email] = @Param1, [ModifiedDate] = @Param2 
+// WHERE [dbo].[User].[Id] = @Param3
 ```
 
 ### Delete
@@ -116,7 +106,7 @@ var query = SqlBuilder.Delete<User>()
                       .Where(user => user.Email == userEmail);
 
 // Generated SQL:
-// DELETE FROM "public"."User" WHERE "public"."User"."Email" = @Param1
+// DELETE FROM [dbo].[User] WHERE [dbo].[User].[Email] = @Param1
 ```
 
 ## Entity Configuration
@@ -127,43 +117,32 @@ Use `[Table]` and `[Column]` attributes from `System.ComponentModel.DataAnnotati
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-[Table("users", Schema = "public")]
+[Table("Users", Schema = "dbo")]
 public class User
 {
     [Key]
     public long Id { get; set; }
 
-    [Column("email_address")]
+    [Column("EmailAddress")]
     public string Email { get; set; }
 
-    [Column("first_name")]
     public string FirstName { get; set; }
-
-    [Column("last_name")]
     public string LastName { get; set; }
-
-    [Column("registration_date")]
     public DateTime RegistrationDate { get; set; }
 }
 ```
 
-> **Note**: PostgreSQL conventionally uses lowercase table and column names with underscores (snake_case). Use the `[Table]` and `[Column]` attributes to map your C# PascalCase properties to PostgreSQL snake_case names.
+## Integration with Dapper
 
-## Integration with Dapper and Npgsql
-
-This library works seamlessly with Dapper and the Npgsql ADO.NET provider:
+This library works seamlessly with Dapper:
 
 ```csharp
 using Dapper;
-using Npgsql;
 using DotNetBrightener.LinQToSqlBuilder;
-using DotNetBrightener.LinQToSqlBuilder.Npgsql;
+using DotNetBrightener.LinQToSqlBuilder.Mssql;
 
 // Initialize once at startup
-NpgsqlSqlBuilder.Initialize();
-
-// Create connection
-using var connection = new NpgsqlConnection(connectionString);
+SqlServerSqlBuilder.Initialize();
 
 // Build and execute queries
 var query = SqlBuilder.Select<User>()
@@ -177,4 +156,5 @@ var users = connection.Query<User>(query.CommandText, query.CommandParameters);
 ## See Also
 
 - [Core Library Documentation](https://www.nuget.org/packages/DotNetBrightener.LinQToSqlBuilder)
-- [SQL Server Provider](https://www.nuget.org/packages/DotNetBrightener.LinQToSqlBuilder.Mssql)
+- [PostgreSQL Provider](https://www.nuget.org/packages/DotNetBrightener.LinQToSqlBuilder.Npgsql)
+

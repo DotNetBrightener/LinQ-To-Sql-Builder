@@ -1,38 +1,61 @@
-# LinQ to SQL Builder - small .NET library supports creating SQL queries and commands in a strongly typed fashion.
+# LinQ to SQL Builder - Core Library
+
+A small .NET library that supports creating SQL queries and commands in a strongly typed fashion using LINQ lambda expressions.
 
 &copy; 2025 [DotNet Brightener](mailto:admin@dotnetbrightener.com)
 
 ![NuGet Version](https://img.shields.io/nuget/v/DotNetBrightener.LinQToSqlBuilder)
 
+## Overview
 
-## Inspiration
+This is the **core library** that provides the base infrastructure for LinQ to SQL Builder. It contains the abstract adapter interfaces and common query building logic that database-specific providers extend.
 
-I am a big fan of ORM, and I have been using Entity Framework since the first day I started my career as a .Net Developer back in 2009. 
+### Architecture
 
-Some time ago I woked on a project and needed to deal with 2 databases at the same time. For some reasons, I am not supposed to use Entity Framework for the second database which is dynamically configured in a tenant-based setting at runtime. So I have to choose either to come back to ADO.Net and making queries using string concatenation and SqlCommand, or I to come up with something that is friendly with Entity Framework usage, which is using Linq lambda expression to describe the query or command we want to process with the database.
+LinQ to SQL Builder uses a **provider-based architecture**:
 
-Searching through the internet, I found a few repositories that seem to fit my needs, but I still reluctant because they all seem to miss something. For instance, the open-source library from [https://github.com/mladenb/sql-query-builder](https://github.com/mladenb/sql-query-builder) does most of the operations that we need for basic usages, but the queries and commands are built on top of strings.
+- **Core Library** (`DotNetBrightener.LinQToSqlBuilder`) - Contains base classes, interfaces, and query building logic
+- **Database Providers** - Implement database-specific SQL syntax:
+  - [`DotNetBrightener.LinQToSqlBuilder.Mssql`](https://www.nuget.org/packages/DotNetBrightener.LinQToSqlBuilder.Mssql) - SQL Server provider
+  - [`DotNetBrightener.LinQToSqlBuilder.Npgsql`](https://www.nuget.org/packages/DotNetBrightener.LinQToSqlBuilder.Npgsql) - PostgreSQL provider
 
-Finally, I found the open-source repository at [https://github.com/DomanyDusan/lambda-sql-builder](https://github.com/DomanyDusan/lambda-sql-builder) and it's very close to what I am looking for. However, the author has not continued supporting the project and its last commit was 7 years prior to the time I started developed this library. So I decided to reference his code and make a modified version of what he had done, and adding support for INSERT, UPDATE, DELETE instead of only SELECT queries as in the original version.
-
-This project is not meant to replace or to cover the entire SQL world, the purpose of this is to provide the most basic and commonly used operations like CRUD (Create / Read / Update / Delete) to the database from the application, which I believe it covers 70% the simple data access operations in most applications.
-
-Continuing the spirit of original library, this library can be used to help you generate the query and parameters that you can use in ADO.Net with **SqlCommand** or you can use with **Dapper** to have a simple mapping back to your entities.
-
-Huge thanks and credits to the original author [DomanyDusan](https://github.com/DomanyDusan) and his tool. And I hope you guys, the developers, find my modified library helpful for your works/projects. All feedbacks and suggestions are welcome so that I can make this tool better.
-
+> **Important**: You must install and initialize a database-specific provider before using the `SqlBuilder` class. The core library alone does not generate valid SQL for any specific database.
 
 ## Installation
 
-### Install using Package Reference
-   
-```
-dotnet add [YOUR_PROJECT_NAME] package DotNetBrightener.LinQToSqlBuilder
+Install the core library along with your preferred database provider:
+
+### For SQL Server
+```bash
+dotnet add package DotNetBrightener.LinQToSqlBuilder.Mssql
 ```
 
-You can optionally specified version by using `--version [version]` parameter
+### For PostgreSQL
+```bash
+dotnet add package DotNetBrightener.LinQToSqlBuilder.Npgsql
+```
 
-### Usage
+## Initialization
+
+Before using any `SqlBuilder` methods, you must initialize the appropriate database adapter once at application startup:
+
+### SQL Server
+```csharp
+using DotNetBrightener.LinQToSqlBuilder.Mssql;
+
+// Call once at application startup
+SqlServerSqlBuilder.Initialize();
+```
+
+### PostgreSQL
+```csharp
+using DotNetBrightener.LinQToSqlBuilder.Npgsql;
+
+// Call once at application startup
+NpgsqlSqlBuilder.Initialize();
+```
+
+## Usage
 
 #### Simple Select
 
@@ -91,6 +114,27 @@ var query = SqlBuilder.Insert<UserGroup>(_ => new UserGroup
             });
 
 var results = Connection.Execute(query.CommandText, query.CommandParameters);
+```
+
+#### Insert with Output Identity
+
+When inserting a record, you can retrieve the auto-generated identity value using `OutputIdentity()`:
+
+```csharp
+var query = SqlBuilder.Insert<UserGroup>(_ => new UserGroup
+            {
+                CreatedBy   = "TestSystem",
+                CreatedDate = DateTimeOffset.Now,
+                Description = "Created from Test System",
+                Name        = "TestUserGroup",
+                IsDeleted   = false
+            })
+            .OutputIdentity();
+
+// SQL Server generates: INSERT INTO ... OUTPUT Inserted.[Id] VALUES ...
+// PostgreSQL generates: INSERT INTO ... VALUES ... RETURNING "Id"
+
+var newId = Connection.ExecuteScalar<long>(query.CommandText, query.CommandParameters);
 ```
 
 #### Insert multiple records
@@ -190,8 +234,23 @@ var query = SqlBuilder.Delete<User>()
 var result = Connection.Execute(query.CommandText, query.CommandParameters);
 ```
 
-## Reference
+## Extending with Custom Adapters
 
-[https://github.com/DomanyDusan/lambda-sql-builder](https://github.com/DomanyDusan/lambda-sql-builder)
+You can create custom database adapters by implementing the `ISqlAdapter` interface or extending the `SqlAdapterBase` class. See the SQL Server and PostgreSQL providers as reference implementations.
 
-[https://github.com/mladenb/sql-query-builder](https://github.com/mladenb/sql-query-builder)
+## Inspiration
+
+I am a big fan of ORM, and I have been using Entity Framework since the first day I started my career as a .Net Developer back in 2009.
+
+Some time ago I worked on a project and needed to deal with 2 databases at the same time. For some reasons, I was not supposed to use Entity Framework for the second database which is dynamically configured in a tenant-based setting at runtime. So I had to choose either to come back to ADO.Net and making queries using string concatenation and SqlCommand, or to come up with something that is friendly with Entity Framework usage, which is using LINQ lambda expressions to describe the query or command we want to process with the database.
+
+Finally, I found the open-source repository at [https://github.com/DomanyDusan/lambda-sql-builder](https://github.com/DomanyDusan/lambda-sql-builder) and it's very close to what I was looking for. I decided to reference his code and make a modified version, adding support for INSERT, UPDATE, DELETE in addition to SELECT queries, and refactoring to support multiple database providers.
+
+This project is not meant to replace or cover the entire SQL world. The purpose is to provide the most basic and commonly used CRUD operations, which I believe covers 70% of simple data access operations in most applications.
+
+Continuing the spirit of the original library, this library can be used to generate queries and parameters for use with ADO.Net **SqlCommand** or with **Dapper** for simple mapping back to your entities.
+
+## References
+
+- [https://github.com/DomanyDusan/lambda-sql-builder](https://github.com/DomanyDusan/lambda-sql-builder)
+- [https://github.com/mladenb/sql-query-builder](https://github.com/mladenb/sql-query-builder)
