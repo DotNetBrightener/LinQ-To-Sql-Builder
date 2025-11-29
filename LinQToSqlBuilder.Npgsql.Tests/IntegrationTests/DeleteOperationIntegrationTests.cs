@@ -1,15 +1,15 @@
 using Dapper;
-using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Entities;
+using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.IntegrationTests;
+namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.IntegrationTests;
 
 /// <summary>
-///     Integration tests for DELETE operations using actual SQL Server database.
+///     Integration tests for DELETE operations using actual PostgreSQL database.
 /// </summary>
-public class DeleteOperationIntegrationTests : SqlServerIntegrationTestBase
+public class DeleteOperationIntegrationTests : PostgreSqlIntegrationTestBase
 {
     public DeleteOperationIntegrationTests(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
@@ -27,7 +27,7 @@ public class DeleteOperationIntegrationTests : SqlServerIntegrationTestBase
         using (var conn = CreateConnection())
         {
             await conn.ExecuteAsync(@"
-                INSERT INTO [dbo].[UsersGroup] ([Name], [Description], [IsDeleted])
+                INSERT INTO ""UsersGroup"" (""Name"", ""Description"", ""IsDeleted"")
                 VALUES (@Name, @Description, @IsDeleted)", testGroup);
         }
 
@@ -41,7 +41,7 @@ public class DeleteOperationIntegrationTests : SqlServerIntegrationTestBase
         rowsAffected.ShouldBe(1);
 
         var deletedGroup = await connection.QuerySingleOrDefaultAsync<UserGroup>(
-            "SELECT * FROM [dbo].[UsersGroup] WHERE [Name] = @Name",
+            @"SELECT * FROM ""UsersGroup"" WHERE ""Name"" = @Name",
             new { testGroup.Name });
 
         deletedGroup.ShouldBeNull();
@@ -58,10 +58,10 @@ public class DeleteOperationIntegrationTests : SqlServerIntegrationTestBase
         using (var conn = CreateConnection())
         {
             await conn.ExecuteAsync(@"
-                INSERT INTO [dbo].[UsersGroup] ([Name], [Description], [IsDeleted]) VALUES 
-                ('To Delete 1', 'Will be deleted', 1),
-                ('To Delete 2', 'Will be deleted', 1),
-                ('To Keep', 'Will not be deleted', 0)
+                INSERT INTO ""UsersGroup"" (""Name"", ""Description"", ""IsDeleted"") VALUES
+                ('To Delete 1', 'Will be deleted', TRUE),
+                ('To Delete 2', 'Will be deleted', TRUE),
+                ('To Keep', 'Will not be deleted', FALSE)
             ");
         }
 
@@ -75,7 +75,7 @@ public class DeleteOperationIntegrationTests : SqlServerIntegrationTestBase
         rowsAffected.ShouldBe(2);
 
         var remainingGroups = (await connection.QueryAsync<UserGroup>(
-            "SELECT * FROM [dbo].[UsersGroup]")).ToList();
+            @"SELECT * FROM ""UsersGroup""")).ToList();
 
         remainingGroups.Count.ShouldBe(1);
         remainingGroups[0].Name.ShouldBe("To Keep");
@@ -92,11 +92,11 @@ public class DeleteOperationIntegrationTests : SqlServerIntegrationTestBase
         using (var conn = CreateConnection())
         {
             await conn.ExecuteAsync(@"
-                INSERT INTO [dbo].[UsersGroup] ([Name], [Description], [IsDeleted], [CreatedBy]) VALUES 
-                ('Admin Group', 'Admin', 0, 'system'),
-                ('Old Group', 'Outdated', 1, 'system'),
-                ('Test Group', 'Testing', 1, 'test'),
-                ('User Group', 'Users', 0, 'admin')
+                INSERT INTO ""UsersGroup"" (""Name"", ""Description"", ""IsDeleted"", ""CreatedBy"") VALUES
+                ('Admin Group', 'Admin', FALSE, 'system'),
+                ('Old Group', 'Outdated', TRUE, 'system'),
+                ('Test Group', 'Testing', TRUE, 'test'),
+                ('User Group', 'Users', FALSE, 'admin')
             ");
         }
 
@@ -110,7 +110,7 @@ public class DeleteOperationIntegrationTests : SqlServerIntegrationTestBase
         rowsAffected.ShouldBe(1);
 
         var remainingGroups = (await connection.QueryAsync<UserGroup>(
-            "SELECT * FROM [dbo].[UsersGroup]")).ToList();
+            @"SELECT * FROM ""UsersGroup""")).ToList();
 
         remainingGroups.Count.ShouldBe(3);
         remainingGroups.ShouldNotContain(g => g.Name == "Old Group");
@@ -130,7 +130,7 @@ public class DeleteOperationIntegrationTests : SqlServerIntegrationTestBase
         using (var conn = CreateConnection())
         {
             await conn.ExecuteAsync(@"
-                INSERT INTO [dbo].[Users] ([FirstName], [LastName], [Email], [RecordDeleted], [FailedLogIns])
+                INSERT INTO ""Users"" (""FirstName"", ""LastName"", ""Email"", ""RecordDeleted"", ""FailedLogIns"")
                 VALUES (@FirstName, @LastName, @Email, @RecordDeleted, @FailedLogIns)", testUser);
         }
 
@@ -144,7 +144,7 @@ public class DeleteOperationIntegrationTests : SqlServerIntegrationTestBase
         rowsAffected.ShouldBe(1);
 
         var deletedUser = await connection.QuerySingleOrDefaultAsync<User>(
-            "SELECT * FROM [dbo].[Users] WHERE [Email] = @Email",
+            @"SELECT * FROM ""Users"" WHERE ""Email"" = @Email",
             new { testUser.Email });
 
         deletedUser.ShouldBeNull();
@@ -161,8 +161,8 @@ public class DeleteOperationIntegrationTests : SqlServerIntegrationTestBase
         using (var conn = CreateConnection())
         {
             await conn.ExecuteAsync(@"
-                INSERT INTO [dbo].[UsersGroup] ([Name], [Description], [IsDeleted]) VALUES 
-                ('Active Group', 'Active', 0)
+                INSERT INTO ""UsersGroup"" (""Name"", ""Description"", ""IsDeleted"") VALUES
+                ('Active Group', 'Active', FALSE)
             ");
         }
 
@@ -176,7 +176,7 @@ public class DeleteOperationIntegrationTests : SqlServerIntegrationTestBase
         rowsAffected.ShouldBe(0);
 
         var remainingGroups = (await connection.QueryAsync<UserGroup>(
-            "SELECT * FROM [dbo].[UsersGroup]")).ToList();
+            @"SELECT * FROM ""UsersGroup""")).ToList();
 
         remainingGroups.Count.ShouldBe(1);
 

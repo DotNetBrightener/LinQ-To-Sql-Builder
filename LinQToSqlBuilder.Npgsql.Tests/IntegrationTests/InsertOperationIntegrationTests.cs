@@ -1,15 +1,15 @@
 using Dapper;
-using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Entities;
+using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.IntegrationTests;
+namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.IntegrationTests;
 
 /// <summary>
-///     Integration tests for INSERT operations using actual SQL Server database.
+///     Integration tests for INSERT operations using actual PostgreSQL database.
 /// </summary>
-public class InsertOperationIntegrationTests : SqlServerIntegrationTestBase
+public class InsertOperationIntegrationTests : PostgreSqlIntegrationTestBase
 {
     public InsertOperationIntegrationTests(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
@@ -24,7 +24,8 @@ public class InsertOperationIntegrationTests : SqlServerIntegrationTestBase
         const string testName = "TestUserGroup";
         const string testDescription = "Test Description";
         const string testCreatedBy = "TestSystem";
-        var testCreatedDate = DateTimeOffset.Now;
+        // PostgreSQL requires UTC offset for timestamp with time zone columns
+        var testCreatedDate = DateTimeOffset.UtcNow;
 
         var query = SqlBuilder.Insert<UserGroup>(_ => new UserGroup
         {
@@ -41,7 +42,7 @@ public class InsertOperationIntegrationTests : SqlServerIntegrationTestBase
 
         // Assert
         var insertedGroup = await connection.QuerySingleOrDefaultAsync<UserGroup>(
-            "SELECT * FROM [dbo].[UsersGroup] WHERE [Name] = @Name",
+            @"SELECT * FROM ""UsersGroup"" WHERE ""Name"" = @Name",
             new { Name = testName });
 
         insertedGroup.ShouldNotBeNull();
@@ -60,7 +61,8 @@ public class InsertOperationIntegrationTests : SqlServerIntegrationTestBase
         // Arrange
         await SetupDatabaseAsync();
         const string testName = "OutputIdentityTestGroup";
-        var testCreatedDate = DateTimeOffset.Now;
+        // PostgreSQL requires UTC offset for timestamp with time zone columns
+        var testCreatedDate = DateTimeOffset.UtcNow;
 
         var query = SqlBuilder.Insert<UserGroup>(_ => new UserGroup
                                {
@@ -80,7 +82,7 @@ public class InsertOperationIntegrationTests : SqlServerIntegrationTestBase
         insertedId.ShouldBeGreaterThan(0);
 
         var insertedGroup = await connection.QuerySingleOrDefaultAsync<UserGroup>(
-            "SELECT * FROM [dbo].[UsersGroup] WHERE [Id] = @Id",
+            @"SELECT * FROM ""UsersGroup"" WHERE ""Id"" = @Id",
             new { Id = insertedId });
 
         insertedGroup.ShouldNotBeNull();
@@ -96,7 +98,8 @@ public class InsertOperationIntegrationTests : SqlServerIntegrationTestBase
     {
         // Arrange
         await SetupDatabaseAsync();
-        var testCreatedDate = DateTimeOffset.Now;
+        // PostgreSQL requires UTC offset for timestamp with time zone columns
+        var testCreatedDate = DateTimeOffset.UtcNow;
 
         var query = SqlBuilder.InsertMany<UserGroup>(_ => new[]
         {
@@ -134,7 +137,7 @@ public class InsertOperationIntegrationTests : SqlServerIntegrationTestBase
         rowsAffected.ShouldBe(3);
 
         var insertedGroups = (await connection.QueryAsync<UserGroup>(
-            "SELECT * FROM [dbo].[UsersGroup]")).ToList();
+            @"SELECT * FROM ""UsersGroup""")).ToList();
 
         insertedGroups.Count.ShouldBe(3);
         insertedGroups.ShouldContain(g => g.Name == "MultiInsertGroup1");
@@ -153,7 +156,8 @@ public class InsertOperationIntegrationTests : SqlServerIntegrationTestBase
         const string testEmail = "test@example.com";
         const string testFirstName = "John";
         const string testLastName = "Doe";
-        var testModifiedDate = DateTimeOffset.Now;
+        // PostgreSQL requires UTC offset for timestamp with time zone columns
+        var testModifiedDate = DateTimeOffset.UtcNow;
 
         var query = SqlBuilder.Insert<User>(_ => new User
         {
@@ -172,7 +176,7 @@ public class InsertOperationIntegrationTests : SqlServerIntegrationTestBase
 
         // Assert
         var insertedUser = await connection.QuerySingleOrDefaultAsync<User>(
-            "SELECT * FROM [dbo].[Users] WHERE [Email] = @Email",
+            @"SELECT * FROM ""Users"" WHERE ""Email"" = @Email",
             new { Email = testEmail });
 
         insertedUser.ShouldNotBeNull();

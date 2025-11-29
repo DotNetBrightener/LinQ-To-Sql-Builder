@@ -31,4 +31,8 @@
 		<ProjectReference Include="..\LinQToSqlBuilder.Mssql\LinQToSqlBuilder.Mssql.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
 </Project>

@@ -1,14 +1,17 @@
-﻿using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Base;
-using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Entities;
+﻿using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Entities;
 using Shouldly;
 using System.Linq.Expressions;
 using Xunit;
 
 namespace DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.UnitTests;
 
-[Collection("SqlServer")]
 public class LinQToSqlDeleteCommandTests
 {
+    static LinQToSqlDeleteCommandTests()
+    {
+        SqlServerSqlBuilder.Initialize();
+    }
+
     [Fact]
     public void DeleteByFieldValue()
     {

@@ -1,4 +1,3 @@
-using DotNetBrightener.LinQToSqlBuilder.Mssql;
 using Xunit;
 
 namespace DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Base;

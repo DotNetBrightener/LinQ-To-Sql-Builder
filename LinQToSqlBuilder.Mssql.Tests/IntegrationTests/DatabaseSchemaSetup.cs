@@ -20,19 +20,6 @@ public static class DatabaseSchemaSetup
     }
 
     /// <summary>
-    ///     Drops all test tables if they exist.
-    /// </summary>
-    public static async Task DropTablesAsync(IDbConnection connection)
-    {
-        await connection.ExecuteAsync(@"
-            IF OBJECT_ID('dbo.UsersUserGroup', 'U') IS NOT NULL DROP TABLE [dbo].[UsersUserGroup];
-            IF OBJECT_ID('dbo.CloneUserGroup', 'U') IS NOT NULL DROP TABLE [dbo].[CloneUserGroup];
-            IF OBJECT_ID('dbo.UsersGroup', 'U') IS NOT NULL DROP TABLE [dbo].[UsersGroup];
-            IF OBJECT_ID('dbo.Users', 'U') IS NOT NULL DROP TABLE [dbo].[Users];
-        ");
-    }
-
-    /// <summary>
     ///     Truncates all test tables to reset data between tests.
     /// </summary>
     public static async Task TruncateTablesAsync(IDbConnection connection)

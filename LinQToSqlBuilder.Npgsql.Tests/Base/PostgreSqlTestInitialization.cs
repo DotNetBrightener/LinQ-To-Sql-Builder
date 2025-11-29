@@ -1,4 +1,3 @@
-using DotNetBrightener.LinQToSqlBuilder.Npgsql;
 using Xunit;
 
 namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Base;

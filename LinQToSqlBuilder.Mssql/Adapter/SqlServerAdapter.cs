@@ -1,6 +1,6 @@
 ﻿using DotNetBrightener.LinQToSqlBuilder.Adapter;
 
-namespace DotNetBrightener.LinQToSqlBuilder.Mssql;
+namespace DotNetBrightener.LinQToSqlBuilder.Mssql.Adapter;
 
 /// <summary>
 ///     SQL Server adapter providing T-SQL specific syntax for query generation.

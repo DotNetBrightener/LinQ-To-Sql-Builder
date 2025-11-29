@@ -1,13 +1,16 @@
-﻿using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Base;
-using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
+﻿using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
 using Shouldly;
 using Xunit;
 
 namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.UnitTests;
 
-[Collection("PostgreSQL")]
 public class LinQToSqlQueryTests
 {
+    static LinQToSqlQueryTests()
+    {
+        NpgsqlSqlBuilder.Initialize();
+    }
+
     [Fact]
     public void QueryCount()
     {

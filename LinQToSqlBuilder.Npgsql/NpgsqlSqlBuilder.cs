@@ -1,3 +1,5 @@
+using DotNetBrightener.LinQToSqlBuilder.Npgsql.Adapter;
+
 namespace DotNetBrightener.LinQToSqlBuilder.Npgsql;
 
 /// <summary>

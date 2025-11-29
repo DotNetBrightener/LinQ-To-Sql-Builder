@@ -1,13 +1,16 @@
-﻿using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Base;
-using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Entities;
+﻿using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Entities;
 using Shouldly;
 using Xunit;
 
 namespace DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.UnitTests;
 
-[Collection("SqlServer")]
 public class LinQToSqlInsertCommandTests
 {
+    static LinQToSqlInsertCommandTests()
+    {
+        SqlServerSqlBuilder.Initialize();
+    }
+
     [Fact]
     public void InsertSingleRecord()
     {

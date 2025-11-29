@@ -9,11 +9,14 @@ namespace DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.IntegrationTests;
 /// <summary>
 ///     Base class for SQL Server integration tests using Testcontainers.
 ///     Provides database connection management and schema setup/teardown.
-///     Note: SQL Server adapter initialization is handled by the [Collection("SqlServer")] fixture.
+///     Each test class gets its own container and can run in parallel with other test classes.
 /// </summary>
 public abstract class SqlServerIntegrationTestBase : MsSqlServerBaseXUnitTest
 {
     private const string TestDatabaseName = "LinQToSqlBuilderTest";
+
+    private static bool _adapterInitialized;
+    private static readonly object AdapterLock = new();
 
     protected ITestOutputHelper TestOutputHelper { get; }
 
@@ -21,6 +24,19 @@ public abstract class SqlServerIntegrationTestBase : MsSqlServerBaseXUnitTest
         : base(testOutputHelper)
     {
         TestOutputHelper = testOutputHelper;
+
+        // Thread-safe initialization of the SQL Server adapter (only needs to happen once per process)
+        if (!_adapterInitialized)
+        {
+            lock (AdapterLock)
+            {
+                if (!_adapterInitialized)
+                {
+                    SqlServerSqlBuilder.Initialize();
+                    _adapterInitialized = true;
+                }
+            }
+        }
     }
 
     /// <summary>

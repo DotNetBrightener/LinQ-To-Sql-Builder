@@ -1,14 +1,17 @@
-﻿using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Base;
-using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
+﻿using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
 using Shouldly;
 using System.Linq.Expressions;
 using Xunit;
 
 namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.UnitTests;
 
-[Collection("PostgreSQL")]
 public class LinQToSqlDeleteCommandTests
 {
+    static LinQToSqlDeleteCommandTests()
+    {
+        NpgsqlSqlBuilder.Initialize();
+    }
+
     [Fact]
     public void DeleteByFieldValue()
     {

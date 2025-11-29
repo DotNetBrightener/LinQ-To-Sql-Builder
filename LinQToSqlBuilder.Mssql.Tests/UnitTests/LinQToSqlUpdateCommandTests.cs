@@ -1,13 +1,16 @@
-﻿using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Base;
-using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Entities;
+﻿using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Entities;
 using Shouldly;
 using Xunit;
 
 namespace DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.UnitTests;
 
-[Collection("SqlServer")]
 public class LinQToSqlUpdateCommandTests
 {
+    static LinQToSqlUpdateCommandTests()
+    {
+        SqlServerSqlBuilder.Initialize();
+    }
+
     [Fact]
     public void UpdateByFieldValue()
     {

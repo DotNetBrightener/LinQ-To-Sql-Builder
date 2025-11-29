@@ -1,6 +1,6 @@
 using DotNetBrightener.LinQToSqlBuilder.Adapter;
 
-namespace DotNetBrightener.LinQToSqlBuilder.Npgsql;
+namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Adapter;
 
 /// <summary>
 ///     PostgreSQL adapter providing Npgsql-specific syntax for query generation.

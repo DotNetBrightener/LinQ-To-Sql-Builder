@@ -1,15 +1,15 @@
 using Dapper;
-using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Entities;
+using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.IntegrationTests;
+namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.IntegrationTests;
 
 /// <summary>
-///     Integration tests for SELECT operations using actual SQL Server database.
+///     Integration tests for SELECT operations using actual PostgreSQL database.
 /// </summary>
-public class SelectOperationIntegrationTests : SqlServerIntegrationTestBase
+public class SelectOperationIntegrationTests : PostgreSqlIntegrationTestBase
 {
     public SelectOperationIntegrationTests(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
@@ -46,7 +46,7 @@ public class SelectOperationIntegrationTests : SqlServerIntegrationTestBase
         // Mark some as deleted
         using (var conn = CreateConnection())
         {
-            await conn.ExecuteAsync("UPDATE [dbo].[UsersGroup] SET [IsDeleted] = 1 WHERE [Id] <= 3");
+            await conn.ExecuteAsync(@"UPDATE ""UsersGroup"" SET ""IsDeleted"" = TRUE WHERE ""Id"" <= 3");
         }
 
         var query = SqlBuilder.Select<UserGroup>()
@@ -144,10 +144,10 @@ public class SelectOperationIntegrationTests : SqlServerIntegrationTestBase
         using (var conn = CreateConnection())
         {
             await conn.ExecuteAsync(@"
-                INSERT INTO [dbo].[UsersGroup] ([Name], [Description], [IsDeleted]) VALUES 
-                ('Admin Group', 'Administrators', 0),
-                ('User Group', 'Regular users', 0),
-                ('Admin Support', 'Admin helpers', 0)
+                INSERT INTO ""UsersGroup"" (""Name"", ""Description"", ""IsDeleted"") VALUES
+                ('Admin Group', 'Administrators', FALSE),
+                ('User Group', 'Regular users', FALSE),
+                ('Admin Support', 'Admin helpers', FALSE)
             ");
         }
 
@@ -242,8 +242,8 @@ public class SelectOperationIntegrationTests : SqlServerIntegrationTestBase
         foreach (var group in groups)
         {
             await connection.ExecuteAsync(@"
-                INSERT INTO [dbo].[UsersGroup] ([Name], [Description], [IsUndeletable], [IsDeleted],
-                    [CreatedDate], [ModifiedDate], [CreatedBy], [ModifiedBy])
+                INSERT INTO ""UsersGroup"" (""Name"", ""Description"", ""IsUndeletable"", ""IsDeleted"",
+                    ""CreatedDate"", ""ModifiedDate"", ""CreatedBy"", ""ModifiedBy"")
                 VALUES (@Name, @Description, @IsUndeletable, @IsDeleted,
                     @CreatedDate, @ModifiedDate, @CreatedBy, @ModifiedBy)",
                 group);
@@ -256,22 +256,22 @@ public class SelectOperationIntegrationTests : SqlServerIntegrationTestBase
 
         // Seed groups
         await connection.ExecuteAsync(@"
-            INSERT INTO [dbo].[UsersGroup] ([Name], [Description], [IsDeleted]) VALUES
-            ('Group 1', 'First Group', 0),
-            ('Group 2', 'Second Group', 0)
+            INSERT INTO ""UsersGroup"" (""Name"", ""Description"", ""IsDeleted"") VALUES
+            ('Group 1', 'First Group', FALSE),
+            ('Group 2', 'Second Group', FALSE)
         ");
 
         // Seed users
         await connection.ExecuteAsync(@"
-            INSERT INTO [dbo].[Users] ([FirstName], [LastName], [Email], [RecordDeleted], [FailedLogIns]) VALUES
-            ('John', 'Doe', 'john@test.com', 0, 0),
-            ('Jane', 'Doe', 'jane@test.com', 0, 0),
-            ('Bob', 'Smith', 'bob@test.com', 0, 0)
+            INSERT INTO ""Users"" (""FirstName"", ""LastName"", ""Email"", ""RecordDeleted"", ""FailedLogIns"") VALUES
+            ('John', 'Doe', 'john@test.com', FALSE, 0),
+            ('Jane', 'Doe', 'jane@test.com', FALSE, 0),
+            ('Bob', 'Smith', 'bob@test.com', FALSE, 0)
         ");
 
         // Seed relationships
         await connection.ExecuteAsync(@"
-            INSERT INTO [dbo].[UsersUserGroup] ([UserId], [UserGroupId]) VALUES
+            INSERT INTO ""UsersUserGroup"" (""UserId"", ""UserGroupId"") VALUES
             (1, 1), (2, 1), (3, 2)
         ");
     }

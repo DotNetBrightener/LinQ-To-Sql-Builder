@@ -1,15 +1,15 @@
 using Dapper;
-using DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Entities;
+using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.IntegrationTests;
+namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.IntegrationTests;
 
 /// <summary>
-///     Integration tests for UPDATE operations using actual SQL Server database.
+///     Integration tests for UPDATE operations using actual PostgreSQL database.
 /// </summary>
-public class UpdateOperationIntegrationTests : SqlServerIntegrationTestBase
+public class UpdateOperationIntegrationTests : PostgreSqlIntegrationTestBase
 {
     public UpdateOperationIntegrationTests(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
@@ -27,7 +27,7 @@ public class UpdateOperationIntegrationTests : SqlServerIntegrationTestBase
         using (var conn = CreateConnection())
         {
             await conn.ExecuteAsync(@"
-                INSERT INTO [dbo].[UsersGroup] ([Name], [Description], [IsDeleted])
+                INSERT INTO ""UsersGroup"" (""Name"", ""Description"", ""IsDeleted"")
                 VALUES (@Name, @Description, @IsDeleted)",
                 new { Name = testName, Description = originalDescription, IsDeleted = false });
         }
@@ -47,7 +47,7 @@ public class UpdateOperationIntegrationTests : SqlServerIntegrationTestBase
         rowsAffected.ShouldBe(1);
 
         var updatedGroup = await connection.QuerySingleOrDefaultAsync<UserGroup>(
-            "SELECT * FROM [dbo].[UsersGroup] WHERE [Name] = @Name",
+            @"SELECT * FROM ""UsersGroup"" WHERE ""Name"" = @Name",
             new { Name = testName });
 
         updatedGroup.ShouldNotBeNull();
@@ -68,17 +68,18 @@ public class UpdateOperationIntegrationTests : SqlServerIntegrationTestBase
         using (var conn = CreateConnection())
         {
             await conn.ExecuteAsync(@"
-                INSERT INTO [dbo].[UsersGroup] ([Name], [Description], [IsDeleted], [ModifiedBy])
+                INSERT INTO ""UsersGroup"" (""Name"", ""Description"", ""IsDeleted"", ""ModifiedBy"")
                 VALUES (@Name, @Description, @IsDeleted, @ModifiedBy)",
                 new { Name = testName, Description = originalDescription, IsDeleted = false, ModifiedBy = "OriginalUser" });
         }
 
-        // Use Replace method and DateTimeOffset.Now which are supported by the library
+        // Use Replace method and DateTimeOffset.UtcNow which are supported by the library
+        // PostgreSQL requires UTC offset for timestamp with time zone columns
         var query = SqlBuilder.Update<UserGroup>(_ => new UserGroup
                                {
                                    Description  = _.Description.Replace("Original", "Updated"),
                                    ModifiedBy   = _.ModifiedBy.Replace("OriginalUser", "UpdateSystem"),
-                                   ModifiedDate = DateTimeOffset.Now
+                                   ModifiedDate = DateTimeOffset.UtcNow
                                })
                               .Where(g => g.Name == testName);
 
@@ -90,7 +91,7 @@ public class UpdateOperationIntegrationTests : SqlServerIntegrationTestBase
         rowsAffected.ShouldBe(1);
 
         var updatedGroup = await connection.QuerySingleOrDefaultAsync<UserGroup>(
-            "SELECT * FROM [dbo].[UsersGroup] WHERE [Name] = @Name",
+            @"SELECT * FROM ""UsersGroup"" WHERE ""Name"" = @Name",
             new { Name = testName });
 
         updatedGroup.ShouldNotBeNull();
@@ -110,10 +111,10 @@ public class UpdateOperationIntegrationTests : SqlServerIntegrationTestBase
         using (var conn = CreateConnection())
         {
             await conn.ExecuteAsync(@"
-                INSERT INTO [dbo].[UsersGroup] ([Name], [Description], [IsDeleted]) VALUES
-                ('Group A', 'Active Group A', 0),
-                ('Group B', 'Active Group B', 0),
-                ('Group C', 'Inactive Group C', 1)
+                INSERT INTO ""UsersGroup"" (""Name"", ""Description"", ""IsDeleted"") VALUES
+                ('Group A', 'Active Group A', FALSE),
+                ('Group B', 'Active Group B', FALSE),
+                ('Group C', 'Inactive Group C', TRUE)
             ");
         }
 
@@ -132,14 +133,14 @@ public class UpdateOperationIntegrationTests : SqlServerIntegrationTestBase
         rowsAffected.ShouldBe(2);
 
         var updatedGroups = (await connection.QueryAsync<UserGroup>(
-            "SELECT * FROM [dbo].[UsersGroup] WHERE [IsDeleted] = 0")).ToList();
+            @"SELECT * FROM ""UsersGroup"" WHERE ""IsDeleted"" = FALSE")).ToList();
 
         updatedGroups.Count.ShouldBe(2);
         updatedGroups.ShouldAllBe(g => g.Description.Contains("Updated Active Group"));
 
         // Verify non-matching record was not updated
         var nonUpdatedGroup = await connection.QuerySingleOrDefaultAsync<UserGroup>(
-            "SELECT * FROM [dbo].[UsersGroup] WHERE [IsDeleted] = 1");
+            @"SELECT * FROM ""UsersGroup"" WHERE ""IsDeleted"" = TRUE");
         nonUpdatedGroup.Description.ShouldBe("Inactive Group C");
 
         // Cleanup
@@ -158,16 +159,17 @@ public class UpdateOperationIntegrationTests : SqlServerIntegrationTestBase
         using (var conn = CreateConnection())
         {
             await conn.ExecuteAsync(@"
-                INSERT INTO [dbo].[Users] ([FirstName], [LastName], [Email], [RecordDeleted], [FailedLogIns])
+                INSERT INTO ""Users"" (""FirstName"", ""LastName"", ""Email"", ""RecordDeleted"", ""FailedLogIns"")
                 VALUES (@FirstName, @LastName, @Email, @RecordDeleted, @FailedLogIns)",
                 new { FirstName = testFirstName, LastName = testLastName, Email = originalEmail, RecordDeleted = false, FailedLogIns = 0 });
         }
 
-        // Use Replace method and DateTimeOffset.Now which are supported by the library
+        // Use Replace method and DateTimeOffset.UtcNow which are supported by the library
+        // PostgreSQL requires UTC offset for timestamp with time zone columns
         var query = SqlBuilder.Update<User>(_ => new User
                                {
                                    Email        = _.Email.Replace("original", "updated"),
-                                   ModifiedDate = DateTimeOffset.Now
+                                   ModifiedDate = DateTimeOffset.UtcNow
                                })
                               .Where(u => u.Email == originalEmail);
 
@@ -179,7 +181,7 @@ public class UpdateOperationIntegrationTests : SqlServerIntegrationTestBase
         rowsAffected.ShouldBe(1);
 
         var updatedUser = await connection.QuerySingleOrDefaultAsync<User>(
-            "SELECT * FROM [dbo].[Users] WHERE [Email] = @Email",
+            @"SELECT * FROM ""Users"" WHERE ""Email"" = @Email",
             new { Email = "updated@test.com" });
 
         updatedUser.ShouldNotBeNull();

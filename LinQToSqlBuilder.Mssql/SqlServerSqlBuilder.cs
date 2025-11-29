@@ -1,3 +1,5 @@
+using DotNetBrightener.LinQToSqlBuilder.Mssql.Adapter;
+
 namespace DotNetBrightener.LinQToSqlBuilder.Mssql;
 
 /// <summary>
