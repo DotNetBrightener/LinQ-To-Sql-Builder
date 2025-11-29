@@ -11,4 +11,9 @@
 		<IsPackable>true</IsPackable>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(AssemblyName).Mssql" />
+		<InternalsVisibleTo Include="$(AssemblyName).Npgsql" />
+	</ItemGroup>
+
 </Project>

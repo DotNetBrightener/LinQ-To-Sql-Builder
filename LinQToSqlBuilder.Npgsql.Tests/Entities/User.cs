@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
+namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
 
 public abstract class ViewModel
 {

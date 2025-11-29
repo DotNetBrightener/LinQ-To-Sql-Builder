@@ -1,10 +1,11 @@
-﻿using DotNetBrightener.LinQToSqlBuilder;
-using LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
+﻿using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Base;
+using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
 using Shouldly;
 using Xunit;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests;
+namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.UnitTests;
 
+[Collection("PostgreSQL")]
 public class LinQToSqlUpdateCommandTests
 {
     [Fact]
@@ -22,11 +23,11 @@ public class LinQToSqlUpdateCommandTests
                                })
                               .Where(user => user.Id == userId);
 
-        query.CommandText.ShouldBe("UPDATE [dbo].[Users] " +
+        query.CommandText.ShouldBe("UPDATE \"public\".\"Users\" " +
                                    "SET " +
-                                   "[Email] = REPLACE([Email], @Param1, @Param2), " +
-                                   "[LastChangePassword] = @Param3, " +
-                                   "[FailedLogIns] = [FailedLogIns] - @Param4 " +
-                                   "WHERE [dbo].[Users].[Id] = @Param5");
+                                   "\"Email\" = REPLACE(\"Email\", @Param1, @Param2), " +
+                                   "\"LastChangePassword\" = @Param3, " +
+                                   "\"FailedLogIns\" = \"FailedLogIns\" - @Param4 " +
+                                   "WHERE \"public\".\"Users\".\"Id\" = @Param5");
     }
 }

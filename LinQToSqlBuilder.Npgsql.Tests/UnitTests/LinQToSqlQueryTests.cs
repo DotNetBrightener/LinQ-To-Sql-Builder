@@ -1,10 +1,11 @@
-﻿using DotNetBrightener.LinQToSqlBuilder;
-using LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
+﻿using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Base;
+using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
 using Shouldly;
 using Xunit;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests;
+namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.UnitTests;
 
+[Collection("PostgreSQL")]
 public class LinQToSqlQueryTests
 {
     [Fact]
@@ -13,14 +14,14 @@ public class LinQToSqlQueryTests
         var query = SqlBuilder.Count<User>(u => u.Id)
                               .Where(u => u.Id > 10);
 
-        query.CommandText.ShouldBe($"SELECT COUNT([dbo].[Users].[Id]) FROM [dbo].[Users] " +
-                                   $"WHERE [dbo].[Users].[Id] > @Param1");
+        query.CommandText.ShouldBe($"SELECT COUNT(\"public\".\"Users\".\"Id\") FROM \"public\".\"Users\" " +
+                                   $"WHERE \"public\".\"Users\".\"Id\" > @Param1");
 
         query = SqlBuilder.Count<User>()
                           .Where(u => u.Id > 10);
 
-        query.CommandText.ShouldBe($"SELECT COUNT(*) FROM [dbo].[Users] " +
-                                   $"WHERE [dbo].[Users].[Id] > @Param1");
+        query.CommandText.ShouldBe($"SELECT COUNT(*) FROM \"public\".\"Users\" " +
+                                   $"WHERE \"public\".\"Users\".\"Id\" > @Param1");
     }
 
     [Fact]
@@ -30,7 +31,7 @@ public class LinQToSqlQueryTests
                               .OrderBy(u => u.Id)
                               .Take(10);
 
-        query.CommandText.ShouldBe($"SELECT TOP(10) [dbo].[Users].* FROM [dbo].[Users] ORDER BY [dbo].[Users].[Id]");
+        query.CommandText.ShouldBe($"SELECT \"public\".\"Users\".* FROM \"public\".\"Users\" ORDER BY \"public\".\"Users\".\"Id\" LIMIT 10");
     }
 
     [Fact]
@@ -47,13 +48,14 @@ public class LinQToSqlQueryTests
                               .OrderBy(u => u.Id)
                               .Take(10);
 
-        query.CommandText.ShouldBe($"SELECT TOP(10) [dbo].[Users].[Email], " +
-                                   $"[dbo].[Users].[FirstName], " +
-                                   $"[dbo].[Users].[LastName], " +
-                                   $"[dbo].[Users].[Id] " +
-                                   $"FROM [dbo].[Users] " +
-                                   $"WHERE NOT [dbo].[Users].[RecordDeleted] = @Param1 " +
-                                   $"ORDER BY [dbo].[Users].[Id]");
+        query.CommandText.ShouldBe($"SELECT \"public\".\"Users\".\"Email\", " +
+                                   $"\"public\".\"Users\".\"FirstName\", " +
+                                   $"\"public\".\"Users\".\"LastName\", " +
+                                   $"\"public\".\"Users\".\"Id\" " +
+                                   $"FROM \"public\".\"Users\" " +
+                                   $"WHERE NOT \"public\".\"Users\".\"RecordDeleted\" = @Param1 " +
+                                   $"ORDER BY \"public\".\"Users\".\"Id\" " +
+                                   $"LIMIT 10");
     }
 
     [Fact]
@@ -67,11 +69,11 @@ public class LinQToSqlQueryTests
 
 
         query.CommandText
-             .ShouldBe($"SELECT [dbo].[Users].* " +
-                       $"FROM [dbo].[Users] " +
-                       $"WHERE [dbo].[Users].[ModifiedDate] > @Param1 " +
-                       $"ORDER BY [dbo].[Users].[Id] " +
-                       $"OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY");
+             .ShouldBe($"SELECT \"public\".\"Users\".* " +
+                       $"FROM \"public\".\"Users\" " +
+                       $"WHERE \"public\".\"Users\".\"ModifiedDate\" > @Param1 " +
+                       $"ORDER BY \"public\".\"Users\".\"Id\" " +
+                       $"LIMIT 10 OFFSET 10");
     }
 
     [Fact]
@@ -83,7 +85,7 @@ public class LinQToSqlQueryTests
                               .Where(user => user.Email == userEmail);
 
         query.CommandText
-             .ShouldBe("SELECT [dbo].[Users].* FROM [dbo].[Users] WHERE [dbo].[Users].[Email] = @Param1");
+             .ShouldBe("SELECT \"public\".\"Users\".* FROM \"public\".\"Users\" WHERE \"public\".\"Users\".\"Email\" = @Param1");
 
         query.CommandParameters.First().Value.ShouldBe(userEmail);
     }
@@ -97,7 +99,7 @@ public class LinQToSqlQueryTests
                               .Where(user => user.Email == userEmail);
 
         query.CommandText
-             .ShouldBe("SELECT TOP(1) [dbo].[Users].* FROM [dbo].[Users] WHERE [dbo].[Users].[Email] = @Param1");
+             .ShouldBe("SELECT \"public\".\"Users\".* FROM \"public\".\"Users\" WHERE \"public\".\"Users\".\"Email\" = @Param1 LIMIT 1");
 
         query.CommandParameters.First().Value.ShouldBe(userEmail);
     }
@@ -111,9 +113,9 @@ public class LinQToSqlQueryTests
                               .Where(user => user.Email.Contains(searchTerm));
 
         query.CommandText
-             .ShouldBe("SELECT [dbo].[Users].* " +
-                       "FROM [dbo].[Users] " +
-                       "WHERE [dbo].[Users].[Email] LIKE @Param1");
+             .ShouldBe("SELECT \"public\".\"Users\".* " +
+                       "FROM \"public\".\"Users\" " +
+                       "WHERE \"public\".\"Users\".\"Email\" LIKE @Param1");
     }
 
     [Fact]
@@ -127,11 +129,11 @@ public class LinQToSqlQueryTests
                               .Where(group => group.Id == groupId);
 
         query.CommandText
-             .ShouldBe("SELECT [dbo].[Users].*, [dbo].[UsersUserGroup].*, [dbo].[UsersGroup].* " +
-                       "FROM [dbo].[Users] " +
-                       "JOIN [dbo].[UsersUserGroup] ON [dbo].[Users].[Id] = [dbo].[UsersUserGroup].[UserId] " +
-                       "JOIN [dbo].[UsersGroup] ON [dbo].[UsersUserGroup].[UserGroupId] = [dbo].[UsersGroup].[Id] " +
-                       "WHERE [dbo].[UsersGroup].[Id] = @Param1");
+             .ShouldBe("SELECT \"public\".\"Users\".*, \"public\".\"UsersUserGroup\".*, \"public\".\"UsersGroup\".* " +
+                       "FROM \"public\".\"Users\" " +
+                       "JOIN \"public\".\"UsersUserGroup\" ON \"public\".\"Users\".\"Id\" = \"public\".\"UsersUserGroup\".\"UserId\" " +
+                       "JOIN \"public\".\"UsersGroup\" ON \"public\".\"UsersUserGroup\".\"UserGroupId\" = \"public\".\"UsersGroup\".\"Id\" " +
+                       "WHERE \"public\".\"UsersGroup\".\"Id\" = @Param1");
 
 
         var query2 = SqlBuilder.Select<User>()
@@ -141,12 +143,12 @@ public class LinQToSqlQueryTests
                                .Where(group => group.Id == groupId);
 
         query2.CommandText
-              .ShouldBe("SELECT [dbo].[Users].*, [dbo].[UsersUserGroup].*, [dbo].[UsersGroup].* " +
-                        "FROM [dbo].[Users] " +
-                        "JOIN [dbo].[UsersUserGroup] ON [dbo].[Users].[Id] = [dbo].[UsersUserGroup].[UserId] " +
-                        "JOIN [dbo].[UsersGroup] ON [dbo].[UsersUserGroup].[UserGroupId] = [dbo].[UsersGroup].[Id] " +
-                        "WHERE [dbo].[Users].[Email] = @Param1 " +
-                        "AND [dbo].[UsersGroup].[Id] = @Param2");
+              .ShouldBe("SELECT \"public\".\"Users\".*, \"public\".\"UsersUserGroup\".*, \"public\".\"UsersGroup\".* " +
+                        "FROM \"public\".\"Users\" " +
+                        "JOIN \"public\".\"UsersUserGroup\" ON \"public\".\"Users\".\"Id\" = \"public\".\"UsersUserGroup\".\"UserId\" " +
+                        "JOIN \"public\".\"UsersGroup\" ON \"public\".\"UsersUserGroup\".\"UserGroupId\" = \"public\".\"UsersGroup\".\"Id\" " +
+                        "WHERE \"public\".\"Users\".\"Email\" = @Param1 " +
+                        "AND \"public\".\"UsersGroup\".\"Id\" = @Param2");
     }
 
     [Fact]
@@ -156,9 +158,9 @@ public class LinQToSqlQueryTests
                               .OrderBy(g => g.Name);
 
         query.CommandText
-             .ShouldBe("SELECT [dbo].[UsersGroup].* " +
-                       "FROM [dbo].[UsersGroup] " +
-                       "ORDER BY [dbo].[UsersGroup].[Name]");
+             .ShouldBe("SELECT \"public\".\"UsersGroup\".* " +
+                       "FROM \"public\".\"UsersGroup\" " +
+                       "ORDER BY \"public\".\"UsersGroup\".\"Name\"");
     }
 
     [Fact]
@@ -169,8 +171,8 @@ public class LinQToSqlQueryTests
 
 
         query.CommandText
-             .ShouldBe("SELECT [dbo].[UsersGroup].* " +
-                       "FROM [dbo].[UsersGroup] " +
-                       "ORDER BY [dbo].[UsersGroup].[Name] DESC");
+             .ShouldBe("SELECT \"public\".\"UsersGroup\".* " +
+                       "FROM \"public\".\"UsersGroup\" " +
+                       "ORDER BY \"public\".\"UsersGroup\".\"Name\" DESC");
     }
 }

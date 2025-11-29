@@ -1,11 +1,12 @@
-﻿using DotNetBrightener.LinQToSqlBuilder;
-using LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
+﻿using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Base;
+using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
 using Shouldly;
 using System.Linq.Expressions;
 using Xunit;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests;
+namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.UnitTests;
 
+[Collection("PostgreSQL")]
 public class LinQToSqlDeleteCommandTests
 {
     [Fact]
@@ -17,34 +18,34 @@ public class LinQToSqlDeleteCommandTests
             {
                 Expression = g => g.IsDeleted,
                 ExpectedQueryString =
-                    "DELETE FROM [dbo].[CloneUserGroup] WHERE [dbo].[CloneUserGroup].[IsDeleted] = @Param1",
+                    "DELETE FROM \"public\".\"CloneUserGroup\" WHERE \"public\".\"CloneUserGroup\".\"IsDeleted\" = @Param1",
                 ExpectedParamValues = [true]
             },
             new TestCase()
             {
                 Expression          = g => g.Id == 1,
-                ExpectedQueryString = "DELETE FROM [dbo].[CloneUserGroup] WHERE [dbo].[CloneUserGroup].[Id] = @Param1",
+                ExpectedQueryString = "DELETE FROM \"public\".\"CloneUserGroup\" WHERE \"public\".\"CloneUserGroup\".\"Id\" = @Param1",
                 ExpectedParamValues = [1]
             },
             new TestCase()
             {
                 Expression = g => g.Name == "Test",
                 ExpectedQueryString =
-                    "DELETE FROM [dbo].[CloneUserGroup] WHERE [dbo].[CloneUserGroup].[Name] = @Param1",
+                    "DELETE FROM \"public\".\"CloneUserGroup\" WHERE \"public\".\"CloneUserGroup\".\"Name\" = @Param1",
                 ExpectedParamValues = ["Test"]
             },
             new TestCase()
             {
                 Expression = g => g.Name == "Test" && g.IsDeleted,
                 ExpectedQueryString =
-                    "DELETE FROM [dbo].[CloneUserGroup] WHERE ([dbo].[CloneUserGroup].[Name] = @Param1 AND [dbo].[CloneUserGroup].[IsDeleted] = @Param2)",
+                    "DELETE FROM \"public\".\"CloneUserGroup\" WHERE (\"public\".\"CloneUserGroup\".\"Name\" = @Param1 AND \"public\".\"CloneUserGroup\".\"IsDeleted\" = @Param2)",
                 ExpectedParamValues = ["Test", true]
             },
             new TestCase()
             {
                 Expression = g => g.Name == "Test" && g.IsDeleted && g.Id == 1,
                 ExpectedQueryString =
-                    "DELETE FROM [dbo].[CloneUserGroup] WHERE (([dbo].[CloneUserGroup].[Name] = @Param1 AND [dbo].[CloneUserGroup].[IsDeleted] = @Param2) AND [dbo].[CloneUserGroup].[Id] = @Param3)",
+                    "DELETE FROM \"public\".\"CloneUserGroup\" WHERE ((\"public\".\"CloneUserGroup\".\"Name\" = @Param1 AND \"public\".\"CloneUserGroup\".\"IsDeleted\" = @Param2) AND \"public\".\"CloneUserGroup\".\"Id\" = @Param3)",
                 ExpectedParamValues = ["Test", true, 1]
             }
         };

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
+namespace DotNetBrightener.LinQToSqlBuilder.Mssql.Tests.Entities;
 
 [Table("CloneUserGroup")]
 public class CloneUserGroup

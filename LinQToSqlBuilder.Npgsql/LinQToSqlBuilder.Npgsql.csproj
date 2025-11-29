@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<PackageId>DotNetBrightener.LinQToSqlBuilder.Npgsql</PackageId>
+		<PackageDescription>PostgreSQL (Npgsql) provider for LinQToSqlBuilder. Enables converting LINQ lambda expressions into PostgreSQL queries with database-specific syntax.</PackageDescription>
+		<RepositoryUrl>https://github.com/dotnetbrightener/linq-to-sql-builder</RepositoryUrl>
+		<AssemblyName>LinQToSqlBuilder.Npgsql</AssemblyName>
+		<RootNamespace>DotNetBrightener.LinQToSqlBuilder.Npgsql</RootNamespace>
+	</PropertyGroup>
+	<PropertyGroup>
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\LinQToSqlBuilder\LinQToSqlBuilder.csproj" />
+	</ItemGroup>
+
+</Project>

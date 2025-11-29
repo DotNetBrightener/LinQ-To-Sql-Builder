@@ -1,7 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
+		<RootNamespace>DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests</RootNamespace>
+		<AssemblyName>LinQToSqlBuilder.Npgsql.Tests</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -22,7 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\LinQToSqlBuilder\LinQToSqlBuilder.csproj" />
+		<ProjectReference Include="..\LinQToSqlBuilder.Npgsql\LinQToSqlBuilder.Npgsql.csproj" />
 	</ItemGroup>
 
 </Project>

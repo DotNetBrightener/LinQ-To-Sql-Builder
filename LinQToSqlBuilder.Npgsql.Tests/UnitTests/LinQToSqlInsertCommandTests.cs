@@ -1,10 +1,11 @@
-﻿using DotNetBrightener.LinQToSqlBuilder;
-using LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
+﻿using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Base;
+using DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
 using Shouldly;
 using Xunit;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests;
+namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.UnitTests;
 
+[Collection("PostgreSQL")]
 public class LinQToSqlInsertCommandTests
 {
     [Fact]
@@ -20,7 +21,7 @@ public class LinQToSqlInsertCommandTests
         });
 
         query.CommandText
-             .ShouldBe("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
+             .ShouldBe("INSERT INTO \"public\".\"UsersGroup\" (\"CreatedBy\", \"CreatedDate\", \"Description\", \"Name\", \"IsDeleted\") " +
                        "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5)");
     }
 
@@ -38,9 +39,9 @@ public class LinQToSqlInsertCommandTests
                               .OutputIdentity();
 
         query.CommandText
-             .ShouldBe("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
-                       "OUTPUT Inserted.[Id] " +
-                       "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5)");
+             .ShouldBe("INSERT INTO \"public\".\"UsersGroup\" (\"CreatedBy\", \"CreatedDate\", \"Description\", \"Name\", \"IsDeleted\") " +
+                       "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5) " +
+                       "RETURNING \"Id\"");
     }
 
     [Fact]
@@ -76,7 +77,7 @@ public class LinQToSqlInsertCommandTests
 
 
         query.CommandText
-             .ShouldBe("INSERT INTO [dbo].[UsersGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted]) " +
+             .ShouldBe("INSERT INTO \"public\".\"UsersGroup\" (\"CreatedBy\", \"CreatedDate\", \"Description\", \"Name\", \"IsDeleted\") " +
                        "VALUES (@Param1, @Param2, @Param3, @Param4, @Param5), " +
                        "(@Param6, @Param7, @Param8, @Param9, @Param10), " +
                        "(@Param11, @Param12, @Param13, @Param14, @Param15)");
@@ -98,16 +99,16 @@ public class LinQToSqlInsertCommandTests
                               .Where(group => group.IsDeleted == false);
 
         query.CommandText
-             .ShouldBe("INSERT INTO [dbo].[CloneUserGroup] ([CreatedBy], [CreatedDate], [Description], [Name], [IsDeleted], [IsUndeletable], [OriginalId]) " +
+             .ShouldBe("INSERT INTO \"public\".\"CloneUserGroup\" (\"CreatedBy\", \"CreatedDate\", \"Description\", \"Name\", \"IsDeleted\", \"IsUndeletable\", \"OriginalId\") " +
                        "SELECT " +
-                       "@Param1 as [CreatedBy], " +
-                       "@Param2 as [CreatedDate], " +
-                       "[dbo].[UsersGroup].[Description] as [Description], " +
-                       "[dbo].[UsersGroup].[Name] as [Name], " +
-                       "[dbo].[UsersGroup].[IsDeleted] as [IsDeleted], " +
-                       "[dbo].[UsersGroup].[IsUndeletable] as [IsUndeletable], " +
-                       "[dbo].[UsersGroup].[Id] as [OriginalId] " +
-                       "FROM [dbo].[UsersGroup] " +
-                       "WHERE [dbo].[UsersGroup].[IsDeleted] = @Param3");
+                       "@Param1 as \"CreatedBy\", " +
+                       "@Param2 as \"CreatedDate\", " +
+                       "\"public\".\"UsersGroup\".\"Description\" as \"Description\", " +
+                       "\"public\".\"UsersGroup\".\"Name\" as \"Name\", " +
+                       "\"public\".\"UsersGroup\".\"IsDeleted\" as \"IsDeleted\", " +
+                       "\"public\".\"UsersGroup\".\"IsUndeletable\" as \"IsUndeletable\", " +
+                       "\"public\".\"UsersGroup\".\"Id\" as \"OriginalId\" " +
+                       "FROM \"public\".\"UsersGroup\" " +
+                       "WHERE \"public\".\"UsersGroup\".\"IsDeleted\" = @Param3");
     }
 }

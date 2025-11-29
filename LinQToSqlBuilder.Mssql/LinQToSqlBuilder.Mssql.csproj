@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<PackageId>DotNetBrightener.LinQToSqlBuilder.Mssql</PackageId>
+		<PackageDescription>Microsoft SQL Server provider for LinQToSqlBuilder. Enables converting LINQ lambda expressions into T-SQL queries with SQL Server-specific syntax.</PackageDescription>
+		<RepositoryUrl>https://github.com/dotnetbrightener/linq-to-sql-builder</RepositoryUrl>
+		<AssemblyName>LinQToSqlBuilder.Mssql</AssemblyName>
+		<RootNamespace>DotNetBrightener.LinQToSqlBuilder.Mssql</RootNamespace>
+	</PropertyGroup>
+	<PropertyGroup>
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\LinQToSqlBuilder\LinQToSqlBuilder.csproj" />
+	</ItemGroup>
+
+</Project>

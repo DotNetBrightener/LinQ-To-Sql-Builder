@@ -1,13 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LinQToSqlBuilder.DataAccessLayer.Tests.Entities;
+namespace DotNetBrightener.LinQToSqlBuilder.Npgsql.Tests.Entities;
 
-[Table("UsersGroup")]
-public class UserGroup
+[Table("CloneUserGroup")]
+public class CloneUserGroup
 {
-    [Key]
     public long Id { get; set; }
+
+    public long OriginalId { get; set; }
 
     public string Name { get; set; }
 

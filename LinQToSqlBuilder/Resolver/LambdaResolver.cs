@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using System.Reflection;
+using DotNetBrightener.LinQToSqlBuilder.Adapter;
 using DotNetBrightener.LinQToSqlBuilder.Builder;
 using DotNetBrightener.LinQToSqlBuilder.UpdateStatementResolver;
 
 namespace DotNetBrightener.LinQToSqlBuilder.Resolver;
 
 /// <summary>
-/// Provides methods to perform resolution to SQL expressions from given lambda expressions
+///     Provides methods to perform resolution to SQL expressions from given lambda expressions.
 /// </summary>
 internal partial class LambdaResolver
 {
@@ -29,26 +30,37 @@ internal partial class LambdaResolver
         Builder = builder;
     }
 
-    #region helpers
-
     private static readonly List<IUpdateStatementResolver> StatementResolvers = [new StringReplaceUpdateResolver()];
 
+    /// <summary>
+    ///     Registers a custom update statement resolver.
+    /// </summary>
+    /// <param name="resolver">The resolver to register.</param>
     public static void RegisterResolver(IUpdateStatementResolver resolver)
     {
         StatementResolvers.Add(resolver);
     }
 
+    /// <summary>
+    ///     Gets the column name from a property selector expression.
+    /// </summary>
     public static string GetColumnName<T>(Expression<Func<T, object>> selector)
     {
         return GetColumnName(GetMemberExpression(selector.Body));
     }
 
+    /// <summary>
+    ///     Gets the column name from an expression.
+    /// </summary>
     public static string GetColumnName(Expression expression)
     {
         var member = GetMemberExpression(expression);
         return GetColumnName(member);
     }
 
+    /// <summary>
+    ///     Gets the column name from a member assignment expression.
+    /// </summary>
     public static string GetColumnName(MemberAssignment expression)
     {
         return GetColumnName(expression.Member);
@@ -70,18 +82,47 @@ internal partial class LambdaResolver
             return $"{memberInfo.Name}";
     }
 
+    /// <summary>
+    ///     Gets the table name from a type, using the adapter's default schema if no schema is specified.
+    /// </summary>
     public static string GetTableName<T>()
     {
-        return GetTableName(typeof(T));
+        return GetTableName(typeof(T), SqlBuilderBase.DefaultAdapter);
     }
 
+    /// <summary>
+    ///     Gets the table name from a type, using the adapter's default schema if no schema is specified.
+    /// </summary>
     public static string GetTableName(Type type)
+    {
+        return GetTableName(type, SqlBuilderBase.DefaultAdapter);
+    }
+
+    /// <summary>
+    ///     Gets the table name from a type using the provided adapter for schema resolution.
+    /// </summary>
+    internal static string GetTableName(Type type, ISqlAdapter adapter)
     {
         var tableAttribute = type.GetCustomAttribute<TableAttribute>();
         if (tableAttribute != null)
-            return $"{tableAttribute.Schema ?? "dbo"}].[{tableAttribute.Name}";
+        {
+            var schema = tableAttribute.Schema;
+            if (string.IsNullOrEmpty(schema))
+            {
+                schema = adapter?.DefaultSchema;
+            }
+
+            if (!string.IsNullOrEmpty(schema))
+            {
+                return $"{schema}].[{tableAttribute.Name}";
+            }
+
+            return tableAttribute.Name;
+        }
         else
+        {
             return $"{type.Name}";
+        }
     }
 
     private static string GetTableName(MemberExpression expression)
@@ -109,6 +150,4 @@ internal partial class LambdaResolver
 
         throw new ArgumentException("Member expression expected");
     }
-
-    #endregion
 }

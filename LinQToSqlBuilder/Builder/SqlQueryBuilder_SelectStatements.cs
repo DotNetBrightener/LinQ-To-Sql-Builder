@@ -73,6 +73,6 @@ internal partial class SqlQueryBuilder
         if (_pageIndex > 0 && OrderByList.Count == 0)
             throw new Exception("Pagination requires the ORDER BY statement to be specified");
 
-        return Adapter.QueryStringPage(Source, Selection, Conditions, Order, _pageSize.Value, _pageIndex);
+        return Adapter.QueryStringPage(Selection, Source, Conditions, Order, _pageSize.Value, _pageIndex);
     }
 }

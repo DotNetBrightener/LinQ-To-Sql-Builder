@@ -1,22 +1,32 @@
 ﻿namespace DotNetBrightener.LinQToSqlBuilder.Adapter;
 
 /// <summary>
-/// Generates the SQL queries that are compatible to all supported databases
+///     Abstract base class that provides common SQL query generation logic.
+///     Extend this class and implement the abstract members to add support for specific database providers.
 /// </summary>
-internal class SqlAdapterBase
+public abstract class SqlAdapterBase : ISqlAdapter
 {
-    public string QueryString(string selection,
-                              string source,
-                              string conditions,
-                              string order    = "",
-                              string grouping = "",
-                              string having   = "")
+    /// <inheritdoc />
+    public abstract string DefaultSchema { get; }
+
+    /// <inheritdoc />
+    public virtual string QueryString(string selection,
+                                      string source,
+                                      string conditions,
+                                      string order    = "",
+                                      string grouping = "",
+                                      string having   = "")
     {
         return $"SELECT {selection} FROM {source} {conditions} {order} {grouping} {having}"
            .Trim();
     }
 
-    public string InsertCommand(string target, List<Dictionary<string, object>> values, string output = "")
+    /// <inheritdoc />
+    public abstract string QueryStringPage(string selection, string source, string conditions, string order,
+                                           int    pageSize,  int    pageIndex = 0);
+
+    /// <inheritdoc />
+    public virtual string InsertCommand(string target, List<Dictionary<string, object>> values, string outputIdentityColumn = "")
     {
         var fieldsToInsert = values.First()
                                    .Select(rowValue => rowValue.Key)
@@ -27,18 +37,19 @@ internal class SqlAdapterBase
             valuesToInsert.Add(string.Join(", ", rowValue.Select(_ => _.Value)));
         }
 
+        var outputClause = !string.IsNullOrEmpty(outputIdentityColumn)
+                               ? OutputInsertedIdentity(outputIdentityColumn) + " "
+                               : string.Empty;
+
         return
             $"INSERT INTO {target} ({string.Join(", ", fieldsToInsert)}) " +
-            (
-                !string.IsNullOrEmpty(output) 
-                    ? $"OUTPUT Inserted.{output} " 
-                    : string.Empty
-            ) +
+            outputClause +
             $"VALUES ({string.Join("), (", valuesToInsert)})"
                .Trim();
     }
 
-    public string InsertFromCommand(string target, string source, List<Dictionary<string, object>> values, string conditions)
+    /// <inheritdoc />
+    public virtual string InsertFromCommand(string target, string source, List<Dictionary<string, object>> values, string conditions)
     {
         var fieldsToInsert = values.First()
                                    .Select(rowValue => rowValue.Key)
@@ -51,7 +62,7 @@ internal class SqlAdapterBase
             valuesToInsert.Add(string.Join(", ", rowValue.Select(_ => _.Value + " as " + _.Key)));
         }
 
-        return 
+        return
             $"INSERT INTO {target} ({string.Join(", ", fieldsToInsert)}) " +
             $"SELECT {string.Join(", ", valuesToInsert)} " +
             $"FROM {source} " +
@@ -59,7 +70,8 @@ internal class SqlAdapterBase
                .Trim();
     }
 
-    public string UpdateCommand(string updates, string source, string conditions)
+    /// <inheritdoc />
+    public virtual string UpdateCommand(string updates, string source, string conditions)
     {
         return $"UPDATE {source} " +
                $"SET {updates} " +
@@ -67,7 +79,8 @@ internal class SqlAdapterBase
                   .Trim();
     }
 
-    public string DeleteCommand(string source, string conditions)
+    /// <inheritdoc />
+    public virtual string DeleteCommand(string source, string conditions)
     {
         if (string.IsNullOrEmpty(conditions))
             throw new ArgumentNullException(nameof(conditions));
@@ -76,4 +89,22 @@ internal class SqlAdapterBase
                $"{conditions}"
                   .Trim();
     }
+
+    /// <inheritdoc />
+    public abstract string Table(string tableName);
+
+    /// <inheritdoc />
+    public abstract string Field(string fieldName);
+
+    /// <inheritdoc />
+    public abstract string Field(string tableName, string fieldName);
+
+    /// <inheritdoc />
+    public abstract string Parameter(string parameterId);
+
+    /// <inheritdoc />
+    public abstract string OutputInsertedIdentity(string fieldName);
+
+    /// <inheritdoc />
+    public abstract string ReplaceFunction(string fieldName, string findWhatParam, string replaceWithParam);
 }
