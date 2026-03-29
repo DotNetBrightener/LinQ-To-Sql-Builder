@@ -1,8 +1,9 @@
 # LinQ to SQL Builder - PostgreSQL Provider
 
+Copyright © 2017 - 2026 Vampire Coder (formerly DotnetBrightener)
+
 PostgreSQL (Npgsql) provider for the LinQ to SQL Builder library.
 
-&copy; 2025 [DotNet Brightener](mailto:admin@dotnetbrightener.com)
 
 ![NuGet Version](https://img.shields.io/nuget/v/DotNetBrightener.LinQToSqlBuilder.Npgsql)
 
@@ -178,3 +179,4 @@ var users = connection.Query<User>(query.CommandText, query.CommandParameters);
 
 - [Core Library Documentation](https://www.nuget.org/packages/DotNetBrightener.LinQToSqlBuilder)
 - [SQL Server Provider](https://www.nuget.org/packages/DotNetBrightener.LinQToSqlBuilder.Mssql)
+

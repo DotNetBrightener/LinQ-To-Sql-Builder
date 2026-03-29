@@ -1,8 +1,9 @@
 # LinQ to SQL Builder - Core Library
 
+Copyright © 2017 - 2026 Vampire Coder (formerly DotnetBrightener)
+
 A small .NET library that supports creating SQL queries and commands in a strongly typed fashion using LINQ lambda expressions.
 
-&copy; 2025 [DotNet Brightener](mailto:admin@dotnetbrightener.com)
 
 ![NuGet Version](https://img.shields.io/nuget/v/DotNetBrightener.LinQToSqlBuilder)
 
@@ -254,3 +255,4 @@ Continuing the spirit of the original library, this library can be used to gener
 
 - [https://github.com/DomanyDusan/lambda-sql-builder](https://github.com/DomanyDusan/lambda-sql-builder)
 - [https://github.com/mladenb/sql-query-builder](https://github.com/mladenb/sql-query-builder)
+
